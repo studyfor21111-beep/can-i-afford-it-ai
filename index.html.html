@@ -1,0 +1,1893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Can I Afford It? AI — Know Before You Buy. AI-powered affordability calculator for cars, homes, phones, college and more. Instant financial analysis.">
+<meta name="keywords" content="can i afford it, affordability calculator, EMI calculator, financial planning India, car loan calculator">
+<meta property="og:title" content="Can I Afford It? AI — Know Before You Buy">
+<meta property="og:description" content="AI-powered affordability analysis for every major purchase. Free, instant, accurate.">
+<meta property="og:type" content="website">
+<title>Can I Afford It? AI — Know Before You Buy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+--bg:#0a0a0f;--bg2:#12121a;--bg3:#1a1a26;--bg4:#22223a;--bg5:#2a2a40;
+--accent:#6c63ff;--accent2:#a78bfa;--green:#22d3a3;--red:#ff6b6b;--amber:#fbbf24;--blue:#38bdf8;
+--text:#f0eeff;--text2:#a09dcc;--text3:#6b68a0;
+--border:rgba(108,99,255,0.22);--border2:rgba(108,99,255,0.12);--border3:rgba(108,99,255,0.06);
+--card:rgba(26,26,38,0.95);--radius:14px;--radius2:10px;--radius3:8px;
+--shadow:0 4px 24px rgba(0,0,0,0.4);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--bg5);border-radius:3px}
+
+/* LAYOUT */
+.app{max-width:1280px;margin:0 auto;padding:0 20px}
+.page{display:none;animation:fadeIn 0.3s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* HEADER */
+.header{padding:20px 0 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border2);position:sticky;top:0;background:rgba(10,10,15,0.95);backdrop-filter:blur(12px);z-index:100}
+.logo{font-size:20px;font-weight:800;background:linear-gradient(135deg,#6c63ff,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;cursor:pointer}
+.tagline{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;letter-spacing:1px}
+.nav{display:flex;gap:4px;flex-wrap:wrap}
+.nav-btn{background:transparent;border:1px solid transparent;color:var(--text3);padding:7px 13px;border-radius:30px;cursor:pointer;font-size:12px;font-family:'Syne',sans-serif;transition:all 0.2s;white-space:nowrap}
+.nav-btn:hover{color:var(--text2);border-color:var(--border)}
+.nav-btn.active{background:rgba(108,99,255,0.15);border-color:var(--accent);color:var(--accent2)}
+
+/* HERO */
+.hero{text-align:center;padding:52px 0 32px}
+.hero h1{font-size:clamp(28px,5vw,58px);font-weight:800;line-height:1.08;margin-bottom:14px}
+.hero h1 span{background:linear-gradient(135deg,#6c63ff,#22d3a3);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{color:var(--text2);font-size:16px;max-width:540px;margin:0 auto 28px;line-height:1.7}
+
+/* SEARCH BAR */
+.search-wrap{max-width:620px;margin:0 auto 32px;position:relative}
+.search-wrap input{width:100%;background:var(--bg2);border:1.5px solid var(--border);border-radius:50px;padding:14px 52px 14px 22px;color:var(--text);font-size:15px;font-family:'Syne',sans-serif;outline:none;transition:border-color 0.2s}
+.search-wrap input:focus{border-color:var(--accent)}
+.search-wrap input::placeholder{color:var(--text3)}
+.search-btn{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:var(--accent);border:none;color:#fff;padding:8px 18px;border-radius:30px;cursor:pointer;font-size:13px;font-family:'Syne',sans-serif;font-weight:600}
+.search-dropdown{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius2);overflow:hidden;z-index:200;display:none;max-height:280px;overflow-y:auto}
+.search-dropdown.show{display:block}
+.search-item{padding:11px 18px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:14px;transition:background 0.15s;border-bottom:1px solid var(--border3)}
+.search-item:hover{background:var(--bg3)}
+.search-item-price{font-family:'DM Mono',monospace;color:var(--accent2);font-size:13px}
+.search-item-cat{font-size:11px;color:var(--text3);background:var(--bg4);padding:2px 8px;border-radius:20px}
+
+/* BADGES */
+.hero-badges{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:36px}
+.badge{background:var(--bg3);border:1px solid var(--border2);padding:7px 15px;border-radius:30px;font-size:13px;color:var(--text2);cursor:pointer;transition:all 0.2s}
+.badge:hover{border-color:var(--accent);color:var(--accent2)}
+.badge.sel{background:rgba(108,99,255,0.15);border-color:var(--accent);color:var(--accent2)}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border2);border-radius:var(--radius);padding:22px;backdrop-filter:blur(10px)}
+.card+.card{margin-top:16px}
+.card-title{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.card-title::after{content:'';flex:1;height:1px;background:var(--border3)}
+
+/* FORM */
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:13px;margin-bottom:18px}
+.field label{display:block;font-size:11px;color:var(--text3);margin-bottom:5px;font-family:'DM Mono',monospace;letter-spacing:0.5px}
+.field input,.field select,.field textarea{width:100%;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius3);padding:10px 14px;color:var(--text);font-size:14px;font-family:'Syne',sans-serif;outline:none;transition:border-color 0.2s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent)}
+.field select option{background:var(--bg2);color:var(--text)}
+.field textarea{resize:vertical;min-height:80px}
+.field input[type=range]{padding:0;height:6px;accent-color:var(--accent);cursor:pointer}
+
+/* BUTTONS */
+.btn{padding:11px 22px;border-radius:30px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Syne',sans-serif;transition:all 0.2s;border:none}
+.btn-primary{background:linear-gradient(135deg,#6c63ff,#a78bfa);color:#fff}
+.btn-primary:hover{transform:translateY(-1px);opacity:0.9}
+.btn-secondary{background:transparent;border:1px solid var(--border);color:var(--text2)}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent2)}
+.btn-sm{padding:7px 14px;font-size:12px}
+.btn-danger{background:rgba(255,107,107,0.15);border:1px solid rgba(255,107,107,0.3);color:var(--red)}
+.btn-success{background:rgba(34,211,163,0.15);border:1px solid rgba(34,211,163,0.3);color:var(--green)}
+.cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.cta .btn-primary{flex:1;min-width:160px;padding:14px}
+
+/* METRICS */
+.metrics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:11px;margin-bottom:18px}
+.metric{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius2);padding:14px}
+.metric-label{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;letter-spacing:0.5px;margin-bottom:6px}
+.metric-value{font-size:20px;font-weight:700}
+.metric-sub{font-size:11px;color:var(--text3);margin-top:3px}
+.green{color:var(--green)!important}.amber{color:var(--amber)!important}.red{color:var(--red)!important}.purple{color:var(--accent2)!important}.blue{color:var(--blue)!important}
+
+/* VERDICT */
+.verdict{padding:18px 22px;border-radius:var(--radius);margin-bottom:18px;display:flex;align-items:flex-start;gap:16px}
+.verdict.can{background:rgba(34,211,163,0.08);border:1px solid rgba(34,211,163,0.25)}
+.verdict.maybe{background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.25)}
+.verdict.no{background:rgba(255,107,107,0.08);border:1px solid rgba(255,107,107,0.25)}
+.verdict-icon{font-size:32px;flex-shrink:0;margin-top:2px}
+.verdict h2{font-size:20px;font-weight:800;margin-bottom:5px}
+.verdict p{color:var(--text2);font-size:13px;line-height:1.6}
+.verdict.can h2{color:var(--green)}.verdict.maybe h2{color:var(--amber)}.verdict.no h2{color:var(--red)}
+
+/* BARS */
+.bar-item{margin-bottom:13px}
+.bar-header{display:flex;justify-content:space-between;margin-bottom:5px;font-size:12px}
+.bar-header span:first-child{color:var(--text2)}
+.bar-track{height:7px;background:var(--bg4);border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+.bar-fill.green{background:linear-gradient(90deg,#22d3a3,#6eeace)}
+.bar-fill.amber{background:linear-gradient(90deg,#fbbf24,#fcd34d)}
+.bar-fill.red{background:linear-gradient(90deg,#ff6b6b,#fc9d9d)}
+.bar-fill.purple{background:linear-gradient(90deg,#6c63ff,#a78bfa)}
+.bar-fill.blue{background:linear-gradient(90deg,#38bdf8,#7dd3fc)}
+
+/* CHARTS */
+.chart-wrap{position:relative;width:100%;height:220px}
+.chart-wrap.tall{height:280px}
+
+/* TABS */
+.tabs{display:flex;gap:5px;margin-bottom:20px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{background:transparent;border:1px solid var(--border2);color:var(--text3);padding:8px 16px;border-radius:30px;cursor:pointer;font-size:12px;font-family:'Syne',sans-serif;white-space:nowrap;transition:all 0.2s}
+.tab:hover{color:var(--text2);border-color:var(--border)}
+.tab.active{background:rgba(108,99,255,0.15);border-color:var(--accent);color:var(--accent2)}
+.tab-pane{display:none}.tab-pane.active{display:block}
+
+/* TIMELINE */
+.timeline{display:flex;gap:0;overflow-x:auto;scrollbar-width:none;margin-bottom:14px}
+.tl-item{flex:1;min-width:90px;text-align:center;padding:12px 6px;background:var(--bg3);border:1px solid var(--border2)}
+.tl-item:first-child{border-radius:var(--radius2) 0 0 var(--radius2)}
+.tl-item:last-child{border-radius:0 var(--radius2) var(--radius2) 0}
+.tl-item:not(:last-child){border-right:none}
+.tl-item.now{background:rgba(108,99,255,0.12);border-color:var(--accent)}
+.tl-label{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-bottom:5px}
+.tl-value{font-size:14px;font-weight:700}
+
+/* CALC RESULTS */
+.calc-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border3);font-size:13px}
+.calc-row:last-child{border-bottom:none;font-weight:700;font-size:15px;color:var(--accent2)}
+.calc-row span:first-child{color:var(--text2)}
+.calc-row span:last-child{font-family:'DM Mono',monospace}
+
+/* COMMUNITY */
+.post-card{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius2);padding:16px;margin-bottom:12px;transition:border-color 0.2s}
+.post-card:hover{border-color:var(--border)}
+.post-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.post-meta{flex:1}
+.post-name{font-size:13px;font-weight:600}
+.post-time{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace}
+.post-tag{font-size:10px;padding:2px 8px;border-radius:20px;font-family:'DM Mono',monospace}
+.post-body{font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:12px}
+.post-actions{display:flex;gap:12px}
+.post-action{background:transparent;border:1px solid var(--border2);color:var(--text3);padding:5px 12px;border-radius:20px;cursor:pointer;font-size:12px;transition:all 0.2s;font-family:'Syne',sans-serif}
+.post-action:hover{border-color:var(--accent);color:var(--accent2)}
+.post-action.liked{background:rgba(255,107,107,0.12);border-color:rgba(255,107,107,0.3);color:var(--red)}
+
+/* CHAT */
+.chat-sidebar{display:grid;grid-template-columns:220px 1fr;gap:16px;min-height:500px}
+.room-list{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius2);padding:12px;display:flex;flex-direction:column;gap:5px}
+.room-item{padding:10px 12px;border-radius:var(--radius3);cursor:pointer;font-size:13px;transition:all 0.2s;border:1px solid transparent}
+.room-item:hover{background:var(--bg4)}
+.room-item.active{background:rgba(108,99,255,0.12);border-color:var(--accent);color:var(--accent2)}
+.room-name{font-weight:600}
+.room-count{font-size:11px;color:var(--text3);margin-top:2px;font-family:'DM Mono',monospace}
+.chat-area{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius2);display:flex;flex-direction:column}
+.chat-header{padding:14px 18px;border-bottom:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between}
+.chat-messages{flex:1;padding:16px;overflow-y:auto;max-height:360px;min-height:280px;display:flex;flex-direction:column;gap:12px}
+.chat-msg{display:flex;gap:10px;align-items:flex-start}
+.chat-msg.own{flex-direction:row-reverse}
+.msg-bubble{background:var(--bg4);padding:10px 14px;border-radius:12px;max-width:65%;font-size:13px;line-height:1.6}
+.chat-msg.own .msg-bubble{background:rgba(108,99,255,0.2);border:1px solid rgba(108,99,255,0.2)}
+.msg-name{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-bottom:4px}
+.chat-input-row{padding:12px 16px;border-top:1px solid var(--border2);display:flex;gap:8px}
+.chat-input-row input{flex:1;background:var(--bg2);border:1px solid var(--border2);border-radius:30px;padding:9px 16px;color:var(--text);font-size:13px;font-family:'Syne',sans-serif;outline:none}
+.chat-input-row input:focus{border-color:var(--accent)}
+
+/* GOAL TRACKER */
+.goal-card{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius2);padding:16px;margin-bottom:12px}
+.goal-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+.goal-title{font-size:16px;font-weight:700}
+.goal-amount{font-family:'DM Mono',monospace;font-size:13px;color:var(--text2)}
+.goal-progress-label{display:flex;justify-content:space-between;font-size:12px;color:var(--text3);margin-bottom:6px;font-family:'DM Mono',monospace}
+.goal-track{height:10px;background:var(--bg4);border-radius:5px;overflow:hidden;margin-bottom:10px}
+.goal-bar{height:100%;border-radius:5px;background:linear-gradient(90deg,#6c63ff,#22d3a3);transition:width 1s ease}
+.goal-eta{font-size:12px;color:var(--text3)}
+
+/* TOOL GRID */
+.tool-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-bottom:20px}
+.tool-card{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius2);padding:18px;cursor:pointer;transition:all 0.2s}
+.tool-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.tool-icon{font-size:28px;margin-bottom:10px}
+.tool-name{font-size:15px;font-weight:700;margin-bottom:4px}
+.tool-desc{font-size:12px;color:var(--text3)}
+
+/* SEO PAGES */
+.seo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.seo-card{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius2);padding:14px;cursor:pointer;transition:all 0.2s}
+.seo-card:hover{border-color:var(--accent)}
+.seo-card h4{font-size:13px;font-weight:700;color:var(--accent2);margin-bottom:5px}
+.seo-card p{font-size:12px;color:var(--text3)}
+
+/* POLL */
+.poll-card{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius2);padding:18px;margin-bottom:14px}
+.poll-q{font-size:15px;font-weight:700;margin-bottom:14px}
+.poll-opt{padding:10px 14px;border:1px solid var(--border2);border-radius:var(--radius3);margin-bottom:8px;cursor:pointer;font-size:13px;transition:all 0.2s;position:relative;overflow:hidden}
+.poll-opt:hover{border-color:var(--accent)}
+.poll-opt.voted{border-color:var(--accent);background:rgba(108,99,255,0.1)}
+.poll-fill{position:absolute;left:0;top:0;height:100%;background:rgba(108,99,255,0.12);transition:width 0.8s ease;z-index:0;border-radius:var(--radius3)}
+.poll-opt-text{position:relative;z-index:1;display:flex;justify-content:space-between}
+.poll-pct{font-family:'DM Mono',monospace;font-size:12px;color:var(--accent2)}
+
+/* TOAST */
+.toast-wrap{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+.toast{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius2);padding:12px 18px;font-size:13px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow);animation:slideIn 0.3s ease;max-width:320px}
+.toast.success{border-color:rgba(34,211,163,0.3);background:rgba(34,211,163,0.08)}
+.toast.error{border-color:rgba(255,107,107,0.3);background:rgba(255,107,107,0.08)}
+.toast.info{border-color:rgba(56,189,248,0.3);background:rgba(56,189,248,0.08)}
+@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes slideOut{to{transform:translateX(120%);opacity:0}}
+
+/* ADS */
+.ad-banner-wrap{text-align:center;padding:10px 0;min-height:62px;display:flex;align-items:center;justify-content:center}
+.ad-sidebar{position:sticky;top:80px}
+.ad-native-wrap{padding:8px 0;min-height:100px}
+.ad-label{font-size:9px;color:var(--text3);font-family:'DM Mono',monospace;letter-spacing:1px;text-transform:uppercase;text-align:center;display:block;margin-bottom:4px}
+.sticky-mobile-ad{display:none;position:fixed;bottom:0;left:0;right:0;z-index:500;background:var(--bg2);border-top:1px solid var(--border2);text-align:center;padding:4px}
+
+/* MAIN LAYOUT */
+.main-layout{display:grid;grid-template-columns:1fr 180px;gap:20px;align-items:start}
+.sidebar-col{position:sticky;top:80px}
+@media(max-width:900px){.main-layout{grid-template-columns:1fr}.sidebar-col{display:none}}
+
+/* SECTION HEADER */
+.section-hdr{font-size:24px;font-weight:800;margin-bottom:6px}
+.section-sub{font-size:14px;color:var(--text2);margin-bottom:28px}
+
+/* GRID 2 */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid2-fixed{display:grid;grid-template-columns:300px 1fr;gap:16px;align-items:start}
+@media(max-width:700px){.grid2,.grid2-fixed,.chat-sidebar{grid-template-columns:1fr}}
+
+/* SCORE CANVAS WRAP */
+.score-visual{display:flex;flex-direction:column;align-items:center;padding:16px}
+.score-big{font-size:44px;font-weight:800;margin-top:6px}
+.score-lbl{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace}
+
+/* ADVICE GRID */
+.advice-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:18px}
+.advice-card{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius2);padding:15px}
+.advice-card .ai{font-size:22px;margin-bottom:8px}
+.advice-card h4{font-size:13px;font-weight:700;margin-bottom:5px}
+.advice-card p{font-size:12px;color:var(--text2);line-height:1.6}
+
+/* RESULT PANEL */
+.result-wrap{display:none;margin-top:20px}
+.result-wrap.show{display:block}
+
+/* LOADING */
+.skeleton{background:linear-gradient(90deg,var(--bg3) 25%,var(--bg4) 50%,var(--bg3) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:var(--radius3)}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* RESPONSIVE NAV */
+.hamburger{display:none;background:transparent;border:1px solid var(--border);border-radius:8px;padding:7px 10px;cursor:pointer;color:var(--text2)}
+.mobile-nav{display:none;flex-direction:column;gap:6px;padding:12px 0;border-bottom:1px solid var(--border2)}
+.mobile-nav.open{display:flex}
+.mobile-nav .nav-btn{text-align:left;border-radius:var(--radius3)}
+
+@media(max-width:860px){.hamburger{display:block}.nav{display:none}}
+@media(max-width:600px){
+  .hero{padding:32px 0 24px}
+  .grid2{grid-template-columns:1fr}
+  .sticky-mobile-ad{display:block}
+}
+</style>
+</head>
+<body>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<!-- STICKY MOBILE AD -->
+<div class="sticky-mobile-ad" id="mobileSticky">
+  <span class="ad-label">Advertisement</span>
+  <div id="ad-mobile-sticky"></div>
+</div>
+
+<div class="app">
+
+<!-- HEADER -->
+<header class="header">
+  <div onclick="goto('home')" style="cursor:pointer">
+    <div class="logo">Can I Afford It? AI</div>
+    <div class="tagline">Know Before You Buy</div>
+  </div>
+  <nav class="nav" id="mainNav">
+    <button class="nav-btn active" onclick="goto('home')">🏠 Home</button>
+    <button class="nav-btn" onclick="goto('tools')">🧮 Tools</button>
+    <button class="nav-btn" onclick="goto('community')">💬 Community</button>
+    <button class="nav-btn" onclick="goto('chat')">🗨️ Chat</button>
+    <button class="nav-btn" onclick="goto('goals')">🎯 Goals</button>
+    <button class="nav-btn" onclick="goto('seo')">📄 Guides</button>
+  </nav>
+  <button class="hamburger" onclick="toggleMobileNav()">☰</button>
+</header>
+<div class="mobile-nav" id="mobileNav">
+  <button class="nav-btn" onclick="goto('home');toggleMobileNav()">🏠 Home</button>
+  <button class="nav-btn" onclick="goto('tools');toggleMobileNav()">🧮 Tools</button>
+  <button class="nav-btn" onclick="goto('community');toggleMobileNav()">💬 Community</button>
+  <button class="nav-btn" onclick="goto('chat');toggleMobileNav()">🗨️ Chat</button>
+  <button class="nav-btn" onclick="goto('goals');toggleMobileNav()">🎯 Goals</button>
+  <button class="nav-btn" onclick="goto('seo');toggleMobileNav()">📄 Guides</button>
+</div>
+
+<!-- ==================== HOME PAGE ==================== -->
+<div class="page active" id="page-home">
+
+  <!-- TOP BANNER AD -->
+  <div class="ad-banner-wrap"><span class="ad-label">Advertisement</span><div id="ad-banner-top"></div></div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <h1>Can You Afford It?<br><span>AI-Powered Answer.</span></h1>
+    <p>Enter your finances, search any product, and get a detailed affordability report with EMI, risk analysis, and 10-year wealth projection.</p>
+
+    <!-- SMART SEARCH -->
+    <div class="search-wrap">
+      <input type="text" id="smartSearch" placeholder="Search: iPhone 16 Pro, BMW X5, IIT Delhi, MacBook Pro..." autocomplete="off" oninput="doSearch(this.value)" onkeydown="if(event.key==='Enter')searchEnter()">
+      <button class="search-btn" onclick="searchEnter()">Search</button>
+      <div class="search-dropdown" id="searchDropdown"></div>
+    </div>
+
+    <div class="hero-badges" id="catBadges">
+      <span class="badge sel" onclick="selCat(this,'Car')">🚗 Car</span>
+      <span class="badge" onclick="selCat(this,'House')">🏠 House</span>
+      <span class="badge" onclick="selCat(this,'College')">🎓 College</span>
+      <span class="badge" onclick="selCat(this,'Phone')">📱 Phone</span>
+      <span class="badge" onclick="selCat(this,'Laptop')">💻 Laptop</span>
+      <span class="badge" onclick="selCat(this,'Vacation')">✈️ Vacation</span>
+      <span class="badge" onclick="selCat(this,'Wedding')">💍 Wedding</span>
+      <span class="badge" onclick="selCat(this,'Bike')">🏍️ Bike</span>
+      <span class="badge" onclick="selCat(this,'Custom')">✨ Custom</span>
+    </div>
+  </div>
+
+  <!-- NATIVE AD -->
+  <div class="ad-native-wrap"><span class="ad-label">Sponsored</span><div id="ad-native-1"></div></div>
+
+  <div class="main-layout">
+    <div>
+      <!-- FORM -->
+      <div class="card">
+        <div class="card-title">Your Financial Profile</div>
+        <div class="form-grid">
+          <div class="field"><label>Monthly Salary (₹)</label><input id="salary" type="number" min="0" placeholder="80000" value="80000" oninput="sanitizeNum(this)"></div>
+          <div class="field"><label>Monthly Expenses (₹)</label><input id="expenses" type="number" min="0" placeholder="45000" value="45000" oninput="sanitizeNum(this)"></div>
+          <div class="field"><label>Existing Savings (₹)</label><input id="savings" type="number" min="0" placeholder="200000" value="200000" oninput="sanitizeNum(this)"></div>
+          <div class="field"><label>Existing Debt (₹)</label><input id="debt" type="number" min="0" placeholder="50000" value="50000" oninput="sanitizeNum(this)"></div>
+          <div class="field"><label>Age</label><input id="age" type="number" min="18" max="65" placeholder="28" value="28"></div>
+          <div class="field"><label>City</label>
+            <select id="city">
+              <option>Delhi</option><option>Mumbai</option><option>Bangalore</option>
+              <option>Chennai</option><option>Hyderabad</option><option>Pune</option>
+              <option>Kolkata</option><option>Ahmedabad</option><option>Jaipur</option><option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="card-title">Purchase Details</div>
+        <div class="form-grid">
+          <div class="field"><label>Category</label>
+            <select id="catSel" onchange="syncCat(this.value)">
+              <option>Car</option><option>House</option><option>College</option>
+              <option>Phone</option><option>Laptop</option><option>Vacation</option>
+              <option>Wedding</option><option>Bike</option><option>Custom</option>
+            </select>
+          </div>
+          <div class="field"><label>Purchase Price (₹)</label><input id="price" type="number" min="0" placeholder="700000" value="700000" oninput="sanitizeNum(this)"></div>
+          <div class="field"><label>Down Payment (₹)</label><input id="downpay" type="number" min="0" placeholder="150000" value="150000" oninput="sanitizeNum(this)"></div>
+          <div class="field"><label>Loan Tenure (years)</label><input id="tenure" type="number" min="1" max="30" placeholder="5" value="5"></div>
+        </div>
+        <div class="cta">
+          <button class="btn btn-primary" onclick="analyze()">⚡ Analyze Affordability</button>
+          <button class="btn btn-secondary" onclick="saveProfile()">💾 Save Profile</button>
+          <button class="btn btn-secondary" onclick="resetForm()">↺ Reset</button>
+        </div>
+      </div>
+
+      <!-- RESULT PANEL -->
+      <div class="result-wrap" id="resultWrap">
+        <div id="verdictBox" class="verdict can">
+          <div class="verdict-icon" id="verdictIcon">✅</div>
+          <div>
+            <h2 id="verdictTitle">Yes, You Can Afford It!</h2>
+            <p id="verdictDesc">Based on your financial profile, this purchase is within your safe budget.</p>
+          </div>
+        </div>
+
+        <!-- POST RESULT BANNER AD -->
+        <div class="ad-banner-wrap"><span class="ad-label">Advertisement</span><div id="ad-result-top"></div></div>
+
+        <div class="card-title" style="margin:0 0 12px">Key Metrics</div>
+        <div class="metrics-grid">
+          <div class="metric"><div class="metric-label">Monthly Savings</div><div class="metric-value" id="mSavings">₹0</div><div class="metric-sub">After expenses</div></div>
+          <div class="metric"><div class="metric-label">Savings Rate</div><div class="metric-value" id="mRate">0%</div><div class="metric-sub">Of salary</div></div>
+          <div class="metric"><div class="metric-label">Debt Ratio</div><div class="metric-value" id="mDebt">0%</div><div class="metric-sub">Debt/Income</div></div>
+          <div class="metric"><div class="metric-label">Emergency Fund</div><div class="metric-value" id="mEmf">0 mo</div><div class="metric-sub">Months covered</div></div>
+          <div class="metric"><div class="metric-label">Monthly EMI</div><div class="metric-value purple" id="mEmi">₹0</div><div class="metric-sub">Estimated</div></div>
+          <div class="metric"><div class="metric-label">Time to Afford</div><div class="metric-value" id="mTime">—</div><div class="metric-sub">Months needed</div></div>
+        </div>
+
+        <div class="grid2" style="margin-bottom:18px">
+          <div class="card">
+            <div class="card-title">Safety Score</div>
+            <div class="score-visual">
+              <canvas id="scoreChart" width="130" height="130" role="img" aria-label="Financial safety score gauge">Safety score</canvas>
+              <div class="score-big" id="scoreNum">78</div>
+              <div class="score-lbl">/ 100 Financial Safety</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Health Breakdown</div>
+            <div id="healthBars"></div>
+          </div>
+        </div>
+
+        <div class="card-title">AI Recommendations</div>
+        <div class="advice-grid" id="adviceGrid"></div>
+
+        <!-- NATIVE AD IN RESULTS -->
+        <div class="ad-native-wrap"><span class="ad-label">Sponsored</span><div id="ad-native-2"></div></div>
+
+        <div class="card-title">Wealth Projection</div>
+        <div class="card">
+          <div class="chart-wrap tall"><canvas id="growthChart" role="img" aria-label="Savings growth over 10 years">Savings projection</canvas></div>
+          <div class="timeline" id="savingsTimeline" style="margin-top:14px"></div>
+        </div>
+
+        <div class="grid2" style="margin-top:16px">
+          <div class="card">
+            <div class="card-title">Budget Breakdown</div>
+            <div style="position:relative;height:200px"><canvas id="pieChart" role="img" aria-label="Budget allocation">Budget pie chart</canvas></div>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;font-size:11px" id="pieLegend"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">EMI Impact on Savings</div>
+            <div style="position:relative;height:200px"><canvas id="barChart" role="img" aria-label="EMI vs savings bar chart">EMI and savings comparison</canvas></div>
+          </div>
+        </div>
+
+        <!-- FOOTER BANNER AD -->
+        <div class="ad-banner-wrap" style="margin-top:20px"><span class="ad-label">Advertisement</span><div id="ad-result-footer"></div></div>
+      </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar-col">
+      <span class="ad-label">Advertisement</span>
+      <div id="ad-sidebar"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TOOLS PAGE ==================== -->
+<div class="page" id="page-tools">
+  <div style="padding:32px 0 20px">
+    <div class="section-hdr">Financial Tools</div>
+    <div class="section-sub">7 powerful calculators for every financial decision</div>
+
+    <div class="ad-banner-wrap"><span class="ad-label">Advertisement</span><div id="ad-tools-top"></div></div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="openTool('sip',this)">📈 SIP</button>
+      <button class="tab" onclick="openTool('fd',this)">🏦 FD</button>
+      <button class="tab" onclick="openTool('compound',this)">🔢 Compound</button>
+      <button class="tab" onclick="openTool('retirement',this)">👴 Retirement</button>
+      <button class="tab" onclick="openTool('inflation',this)">📉 Inflation</button>
+      <button class="tab" onclick="openTool('tax',this)">📋 Tax</button>
+      <button class="tab" onclick="openTool('loan',this)">💳 Loan Eligibility</button>
+      <button class="tab" onclick="openTool('car',this)">🚗 Car EMI</button>
+      <button class="tab" onclick="openTool('house',this)">🏠 Home Loan</button>
+      <button class="tab" onclick="openTool('college',this)">🎓 Education</button>
+      <button class="tab" onclick="openTool('vacation',this)">✈️ Vacation</button>
+      <button class="tab" onclick="openTool('wedding',this)">💍 Wedding</button>
+    </div>
+
+    <!-- SIP -->
+    <div class="tab-pane active" id="tool-sip">
+      <div class="card"><div class="card-title">SIP Calculator — Systematic Investment Plan</div>
+        <div class="form-grid">
+          <div class="field"><label>Monthly SIP Amount (₹)</label><input id="sip-amt" type="number" value="5000" oninput="calcSIP()"></div>
+          <div class="field"><label>Expected Return (% p.a.)</label><input id="sip-rate" type="number" value="12" step="0.5" oninput="calcSIP()"></div>
+          <div class="field"><label>Duration (years)</label><input id="sip-years" type="number" value="10" oninput="calcSIP()"></div>
+        </div>
+        <div id="sip-res"></div>
+        <div class="chart-wrap" style="margin-top:16px"><canvas id="sipChart" role="img" aria-label="SIP growth chart">SIP growth projection</canvas></div>
+      </div>
+    </div>
+
+    <!-- FD -->
+    <div class="tab-pane" id="tool-fd">
+      <div class="card"><div class="card-title">Fixed Deposit Calculator</div>
+        <div class="form-grid">
+          <div class="field"><label>Principal (₹)</label><input id="fd-p" type="number" value="100000" oninput="calcFD()"></div>
+          <div class="field"><label>Interest Rate (% p.a.)</label><input id="fd-r" type="number" value="7" step="0.1" oninput="calcFD()"></div>
+          <div class="field"><label>Duration (years)</label><input id="fd-y" type="number" value="5" oninput="calcFD()"></div>
+          <div class="field"><label>Compounding</label>
+            <select id="fd-comp" onchange="calcFD()">
+              <option value="1">Annually</option><option value="2">Half-yearly</option>
+              <option value="4">Quarterly</option><option value="12" selected>Monthly</option>
+            </select>
+          </div>
+        </div>
+        <div id="fd-res"></div>
+      </div>
+    </div>
+
+    <!-- COMPOUND -->
+    <div class="tab-pane" id="tool-compound">
+      <div class="card"><div class="card-title">Compound Interest Calculator</div>
+        <div class="form-grid">
+          <div class="field"><label>Principal (₹)</label><input id="ci-p" type="number" value="50000" oninput="calcCI()"></div>
+          <div class="field"><label>Rate (% p.a.)</label><input id="ci-r" type="number" value="10" step="0.5" oninput="calcCI()"></div>
+          <div class="field"><label>Years</label><input id="ci-y" type="number" value="5" oninput="calcCI()"></div>
+          <div class="field"><label>Compounding</label>
+            <select id="ci-comp" onchange="calcCI()">
+              <option value="1">Annually</option><option value="12">Monthly</option>
+              <option value="4">Quarterly</option><option value="365">Daily</option>
+            </select>
+          </div>
+        </div>
+        <div id="ci-res"></div>
+      </div>
+    </div>
+
+    <!-- RETIREMENT -->
+    <div class="tab-pane" id="tool-retirement">
+      <div class="card"><div class="card-title">Retirement Corpus Calculator</div>
+        <div class="form-grid">
+          <div class="field"><label>Current Age</label><input id="ret-age" type="number" value="28" oninput="calcRetirement()"></div>
+          <div class="field"><label>Retirement Age</label><input id="ret-retage" type="number" value="60" oninput="calcRetirement()"></div>
+          <div class="field"><label>Monthly Expenses (₹)</label><input id="ret-exp" type="number" value="50000" oninput="calcRetirement()"></div>
+          <div class="field"><label>Current Savings (₹)</label><input id="ret-sav" type="number" value="200000" oninput="calcRetirement()"></div>
+          <div class="field"><label>Expected Return (%)</label><input id="ret-ret" type="number" value="10" oninput="calcRetirement()"></div>
+          <div class="field"><label>Inflation Rate (%)</label><input id="ret-inf" type="number" value="6" oninput="calcRetirement()"></div>
+        </div>
+        <div id="ret-res"></div>
+      </div>
+    </div>
+
+    <!-- INFLATION -->
+    <div class="tab-pane" id="tool-inflation">
+      <div class="card"><div class="card-title">Inflation Calculator</div>
+        <div class="form-grid">
+          <div class="field"><label>Current Value (₹)</label><input id="inf-amt" type="number" value="100000" oninput="calcInflation()"></div>
+          <div class="field"><label>Inflation Rate (%)</label><input id="inf-rate" type="number" value="6" step="0.5" oninput="calcInflation()"></div>
+          <div class="field"><label>Years</label><input id="inf-years" type="number" value="10" oninput="calcInflation()"></div>
+        </div>
+        <div id="inf-res"></div>
+      </div>
+    </div>
+
+    <!-- TAX -->
+    <div class="tab-pane" id="tool-tax">
+      <div class="card"><div class="card-title">Income Tax Calculator (India — FY 2024-25)</div>
+        <div class="form-grid">
+          <div class="field"><label>Annual Income (₹)</label><input id="tax-inc" type="number" value="1200000" oninput="calcTax()"></div>
+          <div class="field"><label>Tax Regime</label>
+            <select id="tax-regime" onchange="calcTax()">
+              <option value="new">New Regime</option><option value="old">Old Regime</option>
+            </select>
+          </div>
+          <div class="field"><label>80C Deductions (₹) — Old only</label><input id="tax-80c" type="number" value="150000" oninput="calcTax()"></div>
+          <div class="field"><label>HRA Exemption (₹) — Old only</label><input id="tax-hra" type="number" value="100000" oninput="calcTax()"></div>
+        </div>
+        <div id="tax-res"></div>
+      </div>
+    </div>
+
+    <!-- LOAN ELIGIBILITY -->
+    <div class="tab-pane" id="tool-loan">
+      <div class="card"><div class="card-title">Loan Eligibility Calculator</div>
+        <div class="form-grid">
+          <div class="field"><label>Monthly Income (₹)</label><input id="le-inc" type="number" value="80000" oninput="calcLoanElig()"></div>
+          <div class="field"><label>Monthly Obligations (₹)</label><input id="le-obl" type="number" value="10000" oninput="calcLoanElig()"></div>
+          <div class="field"><label>Interest Rate (% p.a.)</label><input id="le-rate" type="number" value="9" step="0.5" oninput="calcLoanElig()"></div>
+          <div class="field"><label>Loan Tenure (years)</label><input id="le-tenure" type="number" value="5" oninput="calcLoanElig()"></div>
+        </div>
+        <div id="le-res"></div>
+      </div>
+    </div>
+
+    <!-- CAR EMI -->
+    <div class="tab-pane" id="tool-car">
+      <div class="card"><div class="card-title">Car EMI & Total Cost</div>
+        <div class="form-grid">
+          <div class="field"><label>Car Price (₹)</label><input id="c-price" type="number" value="700000" oninput="calcCar()"></div>
+          <div class="field"><label>Down Payment (₹)</label><input id="c-down" type="number" value="150000" oninput="calcCar()"></div>
+          <div class="field"><label>Interest Rate (%)</label><input id="c-rate" type="number" value="9.5" step="0.1" oninput="calcCar()"></div>
+          <div class="field"><label>Tenure (years)</label><input id="c-tenure" type="number" value="5" oninput="calcCar()"></div>
+        </div>
+        <div id="car-res"></div>
+      </div>
+    </div>
+
+    <!-- HOUSE -->
+    <div class="tab-pane" id="tool-house">
+      <div class="card"><div class="card-title">Home Loan Calculator</div>
+        <div class="form-grid">
+          <div class="field"><label>Property Price (₹)</label><input id="h-price" type="number" value="8000000" oninput="calcHouse()"></div>
+          <div class="field"><label>Down Payment (₹)</label><input id="h-down" type="number" value="1600000" oninput="calcHouse()"></div>
+          <div class="field"><label>Interest Rate (%)</label><input id="h-rate" type="number" value="8.5" step="0.1" oninput="calcHouse()"></div>
+          <div class="field"><label>Tenure (years)</label><input id="h-tenure" type="number" value="20" oninput="calcHouse()"></div>
+        </div>
+        <div id="house-res"></div>
+      </div>
+    </div>
+
+    <!-- COLLEGE -->
+    <div class="tab-pane" id="tool-college">
+      <div class="card"><div class="card-title">Education Cost Calculator</div>
+        <div class="form-grid">
+          <div class="field"><label>Annual Tuition (₹)</label><input id="e-tuition" type="number" value="200000" oninput="calcCollege()"></div>
+          <div class="field"><label>Annual Hostel (₹)</label><input id="e-hostel" type="number" value="80000" oninput="calcCollege()"></div>
+          <div class="field"><label>Annual Living (₹)</label><input id="e-living" type="number" value="60000" oninput="calcCollege()"></div>
+          <div class="field"><label>Duration (years)</label><input id="e-years" type="number" value="4" oninput="calcCollege()"></div>
+        </div>
+        <div id="college-res"></div>
+      </div>
+    </div>
+
+    <!-- VACATION -->
+    <div class="tab-pane" id="tool-vacation">
+      <div class="card"><div class="card-title">Vacation Budget Calculator</div>
+        <div class="form-grid">
+          <div class="field"><label>Flights (₹)</label><input id="v-flights" type="number" value="25000" oninput="calcVacation()"></div>
+          <div class="field"><label>Hotel/Stay (₹)</label><input id="v-hotel" type="number" value="30000" oninput="calcVacation()"></div>
+          <div class="field"><label>Food & Local (₹)</label><input id="v-food" type="number" value="15000" oninput="calcVacation()"></div>
+          <div class="field"><label>Shopping (₹)</label><input id="v-shop" type="number" value="10000" oninput="calcVacation()"></div>
+        </div>
+        <div id="vacation-res"></div>
+      </div>
+    </div>
+
+    <!-- WEDDING -->
+    <div class="tab-pane" id="tool-wedding">
+      <div class="card"><div class="card-title">Wedding Budget Planner</div>
+        <div class="form-grid">
+          <div class="field"><label>Venue (₹)</label><input id="w-venue" type="number" value="300000" oninput="calcWedding()"></div>
+          <div class="field"><label>Catering (₹)</label><input id="w-food" type="number" value="200000" oninput="calcWedding()"></div>
+          <div class="field"><label>Decoration (₹)</label><input id="w-decor" type="number" value="100000" oninput="calcWedding()"></div>
+          <div class="field"><label>Photography (₹)</label><input id="w-photo" type="number" value="80000" oninput="calcWedding()"></div>
+          <div class="field"><label>Clothing & Jewelry (₹)</label><input id="w-cloth" type="number" value="150000" oninput="calcWedding()"></div>
+          <div class="field"><label>Miscellaneous (₹)</label><input id="w-misc" type="number" value="70000" oninput="calcWedding()"></div>
+        </div>
+        <div id="wedding-res"></div>
+      </div>
+    </div>
+
+    <div class="ad-banner-wrap" style="margin-top:24px"><span class="ad-label">Advertisement</span><div id="ad-tools-footer"></div></div>
+  </div>
+</div>
+
+<!-- ==================== COMMUNITY PAGE ==================== -->
+<div class="page" id="page-community">
+  <div style="padding:32px 0 20px">
+    <div class="section-hdr">Community</div>
+    <div class="section-sub">Share your financial goals, questions, and wins</div>
+
+    <div class="ad-banner-wrap"><span class="ad-label">Advertisement</span><div id="ad-comm-top"></div></div>
+
+    <div class="grid2-fixed">
+      <!-- NEW POST -->
+      <div>
+        <div class="card" style="margin-bottom:14px">
+          <div class="card-title">Post to Community</div>
+          <div class="field" style="margin-bottom:10px">
+            <label>Category</label>
+            <select id="postCat">
+              <option>💭 Question</option><option>🎯 Goal Update</option>
+              <option>🏆 Achievement</option><option>💡 Tip</option><option>🔥 Discussion</option>
+            </select>
+          </div>
+          <div class="field" style="margin-bottom:10px">
+            <label>Your post</label>
+            <textarea id="postText" placeholder="Share your financial journey, ask a question, or celebrate a win..."></textarea>
+          </div>
+          <div class="field" style="margin-bottom:14px">
+            <label>Name (optional)</label>
+            <input id="postName" type="text" placeholder="Anonymous" maxlength="30">
+          </div>
+          <button class="btn btn-primary" style="width:100%" onclick="submitPost()">Post to Community</button>
+        </div>
+
+        <!-- POLLS -->
+        <div class="card">
+          <div class="card-title">Community Polls</div>
+          <div id="pollsContainer"></div>
+        </div>
+      </div>
+
+      <!-- FEED -->
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <div style="font-size:15px;font-weight:700">Community Feed</div>
+          <select id="feedFilter" onchange="renderFeed()" style="background:var(--bg2);border:1px solid var(--border2);border-radius:20px;padding:5px 12px;color:var(--text);font-size:12px;outline:none">
+            <option value="all">All Posts</option>
+            <option value="💭 Question">Questions</option>
+            <option value="🎯 Goal Update">Goal Updates</option>
+            <option value="🏆 Achievement">Achievements</option>
+            <option value="💡 Tip">Tips</option>
+            <option value="🔥 Discussion">Discussions</option>
+          </select>
+        </div>
+        <div id="communityFeed"></div>
+        <div class="ad-banner-wrap"><span class="ad-label">Advertisement</span><div id="ad-comm-mid"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== CHAT PAGE ==================== -->
+<div class="page" id="page-chat">
+  <div style="padding:32px 0 20px">
+    <div class="section-hdr">Live Chat Rooms</div>
+    <div class="section-sub">Connect with people making similar financial decisions</div>
+
+    <div class="chat-sidebar">
+      <div>
+        <div class="room-list" id="roomList"></div>
+        <div class="card" style="margin-top:12px;padding:12px">
+          <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;margin-bottom:8px">YOUR NAME</div>
+          <input type="text" id="chatName" placeholder="Anonymous" style="width:100%;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius3);padding:8px 12px;color:var(--text);font-size:13px;outline:none" maxlength="20">
+        </div>
+      </div>
+      <div class="chat-area">
+        <div class="chat-header">
+          <div>
+            <div style="font-size:14px;font-weight:700" id="chatRoomTitle">🚗 Car Buyers</div>
+            <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace" id="chatOnline">247 online</div>
+          </div>
+          <button class="btn btn-sm btn-secondary" onclick="clearChat()">Clear</button>
+        </div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input-row">
+          <input type="text" id="chatInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendChat()" maxlength="200">
+          <button class="btn btn-primary btn-sm" onclick="sendChat()">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== GOALS PAGE ==================== -->
+<div class="page" id="page-goals">
+  <div style="padding:32px 0 20px">
+    <div class="section-hdr">Goal Tracker</div>
+    <div class="section-sub">Set financial targets and track your progress</div>
+
+    <div class="grid2-fixed">
+      <div>
+        <div class="card">
+          <div class="card-title">Add New Goal</div>
+          <div class="field" style="margin-bottom:10px"><label>Goal Name</label><input id="goal-name" type="text" placeholder="e.g. BMW M3, Goa Trip, Emergency Fund" maxlength="50"></div>
+          <div class="field" style="margin-bottom:10px"><label>Target Amount (₹)</label><input id="goal-target" type="number" min="1" placeholder="1500000" oninput="sanitizeNum(this)"></div>
+          <div class="field" style="margin-bottom:10px"><label>Current Saved (₹)</label><input id="goal-current" type="number" min="0" placeholder="200000" oninput="sanitizeNum(this)"></div>
+          <div class="field" style="margin-bottom:14px"><label>Monthly Contribution (₹)</label><input id="goal-monthly" type="number" min="0" placeholder="15000" oninput="sanitizeNum(this)"></div>
+          <button class="btn btn-primary" style="width:100%" onclick="addGoal()">+ Add Goal</button>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <div class="card-title">Summary</div>
+          <div id="goalsSummary"></div>
+        </div>
+      </div>
+
+      <div>
+        <div id="goalsList"></div>
+        <div id="goalsEmpty" class="card" style="text-align:center;padding:32px;display:none">
+          <div style="font-size:40px;margin-bottom:12px">🎯</div>
+          <div style="color:var(--text2)">No goals yet. Add your first financial goal!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SEO/GUIDES PAGE ==================== -->
+<div class="page" id="page-seo">
+  <div style="padding:32px 0 20px">
+    <div class="section-hdr">Affordability Guides</div>
+    <div class="section-sub">Detailed guides for every major financial decision in India</div>
+
+    <div class="ad-banner-wrap"><span class="ad-label">Advertisement</span><div id="ad-seo-top"></div></div>
+
+    <div style="margin-bottom:20px">
+      <input type="text" id="guideSearch" placeholder="Search guides: iPhone, BMW, IIT, MBBS..." style="width:100%;max-width:500px;background:var(--bg2);border:1px solid var(--border2);border-radius:30px;padding:11px 20px;color:var(--text);font-size:14px;outline:none" oninput="filterGuides(this.value)">
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px" id="guideCats"></div>
+    <div class="seo-grid" id="seoGrid"></div>
+  </div>
+</div>
+
+<!-- SEO ARTICLE MODAL -->
+<div id="seoModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:1000;overflow-y:auto">
+  <div style="max-width:760px;margin:40px auto;padding:20px">
+    <div class="card" style="padding:32px">
+      <button class="btn btn-secondary btn-sm" onclick="closeSeoModal()" style="margin-bottom:24px">← Back to Guides</button>
+      <div id="seoArticleContent"></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- .app -->
+
+<script>
+// ============================================================
+// UTILITIES
+// ============================================================
+const fmt=n=>'₹'+Math.round(Math.max(0,n||0)).toLocaleString('en-IN');
+const fmtN=n=>Math.round(Math.max(0,n||0)).toLocaleString('en-IN');
+const safe=v=>isNaN(v)||!isFinite(v)?0:Math.max(0,v);
+const sanitizeNum=el=>{const v=parseFloat(el.value);if(isNaN(v)||v<0)el.value=0};
+
+function calcEMI(principal,rate,months){
+  const p=safe(principal),r=safe(rate)/12/100,m=Math.max(1,Math.round(safe(months)));
+  if(r===0)return p/m;
+  return p*r*Math.pow(1+r,m)/(Math.pow(1+r,m)-1);
+}
+
+function toast(msg,type='info'){
+  const w=document.getElementById('toastWrap');
+  const t=document.createElement('div');
+  const icons={success:'✅',error:'❌',info:'💡'};
+  t.className=`toast ${type}`;
+  t.innerHTML=`<span>${icons[type]||'💡'}</span><span>${msg}</span>`;
+  w.appendChild(t);
+  setTimeout(()=>{t.style.animation='slideOut 0.3s ease forwards';setTimeout(()=>t.remove(),300)},3000);
+}
+
+function resultsHTML(rows){
+  return '<div>'+rows.map(r=>`<div class="calc-row"><span>${r[0]}</span><span>${r[1]}</span></div>`).join('')+'</div>';
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+let currentPage='home';
+function goto(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelector('#page-'+id)?.classList.add('active');
+  document.querySelectorAll('.nav-btn, .mobile-nav .nav-btn').forEach(b=>{
+    b.classList.toggle('active',b.textContent.toLowerCase().includes(id==='home'?'home':id==='tools'?'tool':id==='community'?'comm':id==='chat'?'chat':id==='goals'?'goal':'guide'));
+  });
+  currentPage=id;
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(id==='tools')setTimeout(initTools,100);
+  if(id==='community'){initPolls();renderFeed();}
+  if(id==='chat')initChat();
+  if(id==='goals'){renderGoals();}
+  if(id==='seo')renderSeoPage();
+}
+
+function toggleMobileNav(){
+  const n=document.getElementById('mobileNav');
+  n.classList.toggle('open');
+}
+
+// ============================================================
+// PRODUCT DATABASE
+// ============================================================
+const PRODUCTS=[
+  // PHONES
+  {n:'iPhone 16 Pro Max',cat:'Phone',price:159900},{n:'iPhone 16 Pro',cat:'Phone',price:134900},
+  {n:'iPhone 16',cat:'Phone',price:79900},{n:'iPhone 15',cat:'Phone',price:69900},
+  {n:'Samsung Galaxy S25 Ultra',cat:'Phone',price:134999},{n:'Samsung Galaxy S25+',cat:'Phone',price:99999},
+  {n:'Samsung Galaxy S25',cat:'Phone',price:79999},{n:'Samsung Galaxy S24 FE',cat:'Phone',price:44999},
+  {n:'OnePlus 13',cat:'Phone',price:69999},{n:'OnePlus 12',cat:'Phone',price:64999},
+  {n:'Pixel 9 Pro',cat:'Phone',price:109999},{n:'Pixel 9',cat:'Phone',price:79999},
+  {n:'Vivo X200 Pro',cat:'Phone',price:99999},{n:'Oppo Find X8 Pro',cat:'Phone',price:89999},
+  {n:'Xiaomi 14 Ultra',cat:'Phone',price:99999},{n:'Redmi Note 14 Pro+',cat:'Phone',price:29999},
+  {n:'Realme GT 7 Pro',cat:'Phone',price:41999},{n:'iQOO 13',cat:'Phone',price:54999},
+  {n:'Nothing Phone 3a',cat:'Phone',price:24999},{n:'Motorola Edge 50 Pro',cat:'Phone',price:31999},
+  {n:'Samsung Galaxy A55',cat:'Phone',price:34999},{n:'OnePlus Nord 4',cat:'Phone',price:29999},
+  {n:'iPhone SE 4',cat:'Phone',price:54900},{n:'Xiaomi 15',cat:'Phone',price:79999},
+  {n:'Poco X7 Pro',cat:'Phone',price:26999},{n:'Redmi 14C',cat:'Phone',price:10999},
+  // LAPTOPS
+  {n:'MacBook Pro 16 M4 Pro',cat:'Laptop',price:299900},{n:'MacBook Pro 14 M4',cat:'Laptop',price:199900},
+  {n:'MacBook Air 15 M3',cat:'Laptop',price:139900},{n:'MacBook Air 13 M3',cat:'Laptop',price:114900},
+  {n:'Dell XPS 15',cat:'Laptop',price:189990},{n:'Dell XPS 13',cat:'Laptop',price:129990},
+  {n:'HP Spectre x360 14',cat:'Laptop',price:159990},{n:'HP Omen 16',cat:'Laptop',price:89990},
+  {n:'Lenovo ThinkPad X1 Carbon',cat:'Laptop',price:164990},{n:'Lenovo Legion 5 Pro',cat:'Laptop',price:99990},
+  {n:'Asus ROG Zephyrus G16',cat:'Laptop',price:189990},{n:'Asus TUF Gaming A15',cat:'Laptop',price:79990},
+  {n:'Microsoft Surface Pro 11',cat:'Laptop',price:149999},{n:'Razer Blade 14',cat:'Laptop',price:269990},
+  {n:'Acer Predator Helios 18',cat:'Laptop',price:149990},{n:'MSI Titan 18 HX',cat:'Laptop',price:329990},
+  {n:'Samsung Galaxy Book4 Pro',cat:'Laptop',price:149990},{n:'HP Pavilion 15',cat:'Laptop',price:54990},
+  {n:'Lenovo IdeaPad Slim 5',cat:'Laptop',price:49990},{n:'Dell Inspiron 15',cat:'Laptop',price:59990},
+  // CARS
+  {n:'Maruti Swift',cat:'Car',price:649000},{n:'Maruti Baleno',cat:'Car',price:699000},
+  {n:'Maruti Brezza',cat:'Car',price:869000},{n:'Maruti Ertiga',cat:'Car',price:899000},
+  {n:'Hyundai Creta',cat:'Car',price:1099000},{n:'Hyundai i20',cat:'Car',price:749000},
+  {n:'Tata Nexon',cat:'Car',price:799000},{n:'Tata Harrier',cat:'Car',price:1499000},
+  {n:'Honda City',cat:'Car',price:1199000},{n:'Honda Amaze',cat:'Car',price:759000},
+  {n:'Toyota Innova Crysta',cat:'Car',price:2099000},{n:'Toyota Fortuner',cat:'Car',price:3399000},
+  {n:'Kia Seltos',cat:'Car',price:1099000},{n:'Kia Sonet',cat:'Car',price:799000},
+  {n:'BMW 3 Series',cat:'Car',price:4699000},{n:'BMW X5',cat:'Car',price:9499000},
+  {n:'Mercedes C-Class',cat:'Car',price:5799000},{n:'Mercedes GLC',cat:'Car',price:7499000},
+  {n:'Audi A4',cat:'Car',price:4799000},{n:'Volkswagen Virtus',cat:'Car',price:1229000},
+  {n:'Mahindra XUV700',cat:'Car',price:1399000},{n:'Mahindra Scorpio N',cat:'Car',price:1399000},
+  {n:'Tata Punch EV',cat:'Car',price:999000},{n:'Hyundai Ioniq 5',cat:'Car',price:4599000},
+  // COLLEGES
+  {n:'IIT Delhi',cat:'College',price:900000},{n:'IIT Bombay',cat:'College',price:900000},
+  {n:'IIT Madras',cat:'College',price:900000},{n:'IIT Kanpur',cat:'College',price:900000},
+  {n:'BITS Pilani',cat:'College',price:2200000},{n:'BITS Goa',cat:'College',price:2200000},
+  {n:'AIIMS Delhi MBBS',cat:'College',price:1500000},{n:'CMC Vellore MBBS',cat:'College',price:4000000},
+  {n:'NIT Trichy',cat:'College',price:600000},{n:'NIT Warangal',cat:'College',price:600000},
+  {n:'VIT Vellore',cat:'College',price:1800000},{n:'Manipal University',cat:'College',price:2000000},
+  {n:'Symbiosis Pune',cat:'College',price:1600000},{n:'Christ University Bangalore',cat:'College',price:1200000},
+  {n:'SRCC Delhi',cat:'College',price:400000},{n:'Hindu College Delhi',cat:'College',price:200000},
+  {n:'IIM Ahmedabad MBA',cat:'College',price:3000000},{n:'IIM Bangalore MBA',cat:'College',price:2800000},
+  {n:'ISB Hyderabad MBA',cat:'College',price:4000000},{n:'XLRI Jamshedpur MBA',cat:'College',price:2400000},
+];
+
+// ============================================================
+// SMART SEARCH
+// ============================================================
+let selectedCat='Car';
+function selCat(el,cat){
+  document.querySelectorAll('#catBadges .badge').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');selectedCat=cat;
+  document.getElementById('catSel').value=cat;
+}
+function syncCat(val){
+  selectedCat=val;
+  document.querySelectorAll('#catBadges .badge').forEach(b=>{
+    if(b.textContent.includes(val))b.classList.add('sel');
+    else b.classList.remove('sel');
+  });
+}
+
+let searchTimer=null;
+function doSearch(q){
+  clearTimeout(searchTimer);
+  const dd=document.getElementById('searchDropdown');
+  if(!q||q.length<2){dd.classList.remove('show');return;}
+  searchTimer=setTimeout(()=>{
+    const ql=q.toLowerCase();
+    const results=PRODUCTS.filter(p=>p.n.toLowerCase().includes(ql)||p.cat.toLowerCase().includes(ql)).slice(0,8);
+    if(!results.length){dd.classList.remove('show');return;}
+    dd.innerHTML=results.map(p=>`<div class="search-item" onclick="selectProduct('${p.n.replace(/'/g,"\\'")}',${p.price},'${p.cat}')">
+      <span>${p.n}</span>
+      <span style="display:flex;gap:8px;align-items:center">
+        <span class="search-item-cat">${p.cat}</span>
+        <span class="search-item-price">${fmt(p.price)}</span>
+      </span></div>`).join('');
+    dd.classList.add('show');
+  },200);
+}
+
+function selectProduct(name,price,cat){
+  document.getElementById('smartSearch').value=name;
+  document.getElementById('searchDropdown').classList.remove('show');
+  document.getElementById('price').value=price;
+  document.getElementById('catSel').value=cat;
+  syncCat(cat);
+  toast(`${name} loaded — ${fmt(price)}`, 'success');
+}
+
+function searchEnter(){
+  const q=document.getElementById('smartSearch').value;
+  const ql=q.toLowerCase();
+  const found=PRODUCTS.find(p=>p.n.toLowerCase().includes(ql)||p.n.toLowerCase()===ql);
+  if(found)selectProduct(found.n,found.price,found.cat);
+  else toast('Product not found. Enter price manually.','info');
+  document.getElementById('searchDropdown').classList.remove('show');
+}
+
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.search-wrap'))
+    document.getElementById('searchDropdown').classList.remove('show');
+});
+
+// ============================================================
+// MAIN AFFORDABILITY ANALYZER
+// ============================================================
+let scoreInst,growthInst,pieInst,barInst;
+
+function resetForm(){
+  ['salary','expenses','savings','debt','price','downpay'].forEach(id=>{
+    document.getElementById(id).value='';
+  });
+  document.getElementById('resultWrap').classList.remove('show');
+  toast('Form reset','info');
+}
+
+function saveProfile(){
+  const data={
+    salary:document.getElementById('salary').value,
+    expenses:document.getElementById('expenses').value,
+    savings:document.getElementById('savings').value,
+    debt:document.getElementById('debt').value,
+    age:document.getElementById('age').value,
+    city:document.getElementById('city').value,
+  };
+  localStorage.setItem('ciai_profile',JSON.stringify(data));
+  toast('Profile saved!','success');
+}
+
+function loadProfile(){
+  try{
+    const d=JSON.parse(localStorage.getItem('ciai_profile')||'{}');
+    if(d.salary)document.getElementById('salary').value=d.salary;
+    if(d.expenses)document.getElementById('expenses').value=d.expenses;
+    if(d.savings)document.getElementById('savings').value=d.savings;
+    if(d.debt)document.getElementById('debt').value=d.debt;
+    if(d.age)document.getElementById('age').value=d.age;
+    if(d.city)document.getElementById('city').value=d.city;
+  }catch(e){}
+}
+
+function analyze(){
+  const salary=safe(parseFloat(document.getElementById('salary').value));
+  const expenses=safe(parseFloat(document.getElementById('expenses').value));
+  const savingsAmt=safe(parseFloat(document.getElementById('savings').value));
+  const debt=safe(parseFloat(document.getElementById('debt').value));
+  const age=safe(parseInt(document.getElementById('age').value))||28;
+  const price=safe(parseFloat(document.getElementById('price').value));
+  const downpay=safe(parseFloat(document.getElementById('downpay').value));
+  const tenure=safe(parseInt(document.getElementById('tenure').value))||5;
+  const cat=selectedCat;
+
+  if(salary<=0){toast('Please enter a valid salary','error');return;}
+  if(price<=0){toast('Please enter a purchase price','error');return;}
+
+  const monthlySavings=salary-expenses;
+  const savingsRate=salary>0?(monthlySavings/salary)*100:0;
+  const debtRatio=salary>0?(debt/salary)*100:0;
+  const emFund=expenses>0?savingsAmt/expenses:0;
+  const loanAmt=Math.max(0,price-downpay);
+  const intRate={House:8.5,Car:9.5,Bike:9.5,College:10,Phone:14,Laptop:13,Vacation:14,Wedding:14,Custom:12}[cat]||12;
+  const emi=loanAmt>0?calcEMI(loanAmt,intRate,tenure*12):0;
+  const emiRatio=salary>0?(emi/salary)*100:0;
+  const loanNeeded=Math.max(0,price-savingsAmt-downpay);
+  const monthsNeeded=monthlySavings>0?Math.ceil(loanNeeded/monthlySavings):999;
+
+  const score=Math.round(Math.max(0,Math.min(100,
+    (savingsRate>=20?30:savingsRate>=10?20:10)+
+    (emFund>=6?20:emFund>=3?12:5)+
+    (debtRatio<10?20:debtRatio<30?12:4)+
+    (emiRatio<30?20:emiRatio<40?12:4)+
+    (savingsAmt>=price*0.2?10:savingsAmt>=price*0.1?6:2)
+  )));
+
+  let verdict='can',vIcon='✅',vTitle='Yes, You Can Afford It!';
+  let vDesc=`Monthly savings ${fmt(monthlySavings)} support this. Safety score: ${score}/100.`;
+  if(score<40||emiRatio>50||monthlySavings<emi*0.7){
+    verdict='no';vIcon='❌';vTitle='Not Recommended Right Now';
+    vDesc=`EMI of ${fmt(emi)}/month would strain your budget (${Math.round(emiRatio)}% of salary). Build savings for ${monthsNeeded<999?monthsNeeded:24}+ months first.`;
+  } else if(score<60||emiRatio>35){
+    verdict='maybe';vIcon='⚠️';vTitle='Possible, But Be Careful';
+    vDesc=`EMI ${fmt(emi)}/month = ${Math.round(emiRatio)}% of salary. Feasible but tight. Ensure 6-month emergency fund first.`;
+  }
+
+  const vb=document.getElementById('verdictBox');
+  vb.className='verdict '+verdict;
+  document.getElementById('verdictIcon').textContent=vIcon;
+  document.getElementById('verdictTitle').textContent=vTitle;
+  document.getElementById('verdictDesc').textContent=vDesc;
+
+  const col=v=>v>0?'green':v>-10?'amber':'red';
+  document.getElementById('mSavings').textContent=fmt(monthlySavings);
+  document.getElementById('mSavings').className='metric-value '+col(monthlySavings);
+  document.getElementById('mRate').textContent=Math.round(savingsRate)+'%';
+  document.getElementById('mRate').className='metric-value '+(savingsRate>=20?'green':savingsRate>=10?'amber':'red');
+  document.getElementById('mDebt').textContent=Math.round(debtRatio)+'%';
+  document.getElementById('mDebt').className='metric-value '+(debtRatio<20?'green':debtRatio<40?'amber':'red');
+  document.getElementById('mEmf').textContent=Math.round(emFund)+' mo';
+  document.getElementById('mEmf').className='metric-value '+(emFund>=6?'green':emFund>=3?'amber':'red');
+  document.getElementById('mEmi').textContent=fmt(emi);
+  document.getElementById('mTime').textContent=monthsNeeded<999?monthsNeeded+' mo':'—';
+  document.getElementById('mTime').className='metric-value '+(monthsNeeded<12?'green':monthsNeeded<24?'amber':'red');
+
+  // Score chart
+  if(scoreInst)scoreInst.destroy();
+  const sCtx=document.getElementById('scoreChart').getContext('2d');
+  const sc=score>=70?'#22d3a3':score>=40?'#fbbf24':'#ff6b6b';
+  scoreInst=new Chart(sCtx,{type:'doughnut',data:{datasets:[{data:[score,100-score],backgroundColor:[sc,'#1a1a26'],borderWidth:0}]},options:{responsive:false,cutout:'78%',plugins:{legend:{display:false},tooltip:{enabled:false}},animation:{duration:900}}});
+  document.getElementById('scoreNum').textContent=score;
+  document.getElementById('scoreNum').style.color=sc;
+
+  // Health bars
+  const bars=[
+    {l:'Savings Rate',v:Math.min(100,savingsRate),c:savingsRate>=20?'green':savingsRate>=10?'amber':'red',d:Math.round(savingsRate)+'%'},
+    {l:'Emergency Fund',v:Math.min(100,(emFund/6)*100),c:emFund>=6?'green':emFund>=3?'amber':'red',d:Math.round(emFund)+' months'},
+    {l:'Debt Health',v:Math.max(0,100-debtRatio),c:debtRatio<20?'green':debtRatio<40?'amber':'red',d:Math.round(100-debtRatio)+'%'},
+    {l:'EMI Safety',v:Math.max(0,100-emiRatio*2),c:emiRatio<30?'green':emiRatio<45?'amber':'red',d:Math.round(emiRatio)+'% of salary'},
+  ];
+  document.getElementById('healthBars').innerHTML=bars.map(b=>`
+    <div class="bar-item">
+      <div class="bar-header"><span>${b.l}</span><span class="${b.c}">${b.d}</span></div>
+      <div class="bar-track"><div class="bar-fill ${b.c}" style="width:${Math.round(b.v)}%"></div></div>
+    </div>`).join('');
+
+  // Advice
+  const advices=[];
+  if(verdict==='can'){
+    advices.push({i:'💰',t:'Recommended Budget',b:`Safe max: ${fmt(salary*60*(score/100))}. Your down payment is ${Math.round((downpay/price)*100)}% — ${downpay/price>=0.2?'excellent!':'aim for 20%.'}`});
+    advices.push({i:'📈',t:'EMI Plan',b:`${fmt(emi)}/month = ${Math.round(emiRatio)}% of salary. Ideal under 30%. You have good headroom.`});
+    advices.push({i:'🛡️',t:'Emergency Fund',b:`${Math.round(emFund)} months covered. ${emFund>=6?'Well protected!':'Build to 6 months before this purchase.'}`});
+  } else if(verdict==='maybe'){
+    advices.push({i:'⏳',t:'Boost Savings First',b:`Increase monthly savings by ${fmt(Math.max(0,emi-monthlySavings*0.3))} more. Target score: ${score+15}/100.`});
+    advices.push({i:'💳',t:'Clear Debt First',b:`Pay off ${fmt(debt)} in existing debt. This improves loan eligibility and reduces interest burden.`});
+    advices.push({i:'🎯',t:'Alternative Budget',b:`Consider ${fmt(price*0.65)} instead. EMI drops to ~${fmt(calcEMI(price*0.65*0.8,intRate,tenure*12))}/month.`});
+  } else {
+    advices.push({i:'🚫',t:'Not Yet Affordable',b:`EMI ${fmt(emi)} exceeds safe limit. Need ${fmt(Math.max(0,price*0.2-savingsAmt))} more in savings.`});
+    advices.push({i:'📅',t:`Timeline: ${monthsNeeded<999?monthsNeeded+' Months':'Increase income first'}`,b:`Save ${fmt(Math.max(monthlySavings,5000))}/month. Ready in ${monthsNeeded<999?monthsNeeded+' months':'a few years'}.`});
+    advices.push({i:'💡',t:'Smart Alternative',b:`Budget ${fmt(price*0.4)} achievable in 6 months. EMI only ${fmt(calcEMI(price*0.4*0.8,intRate,tenure*12))}/month.`});
+  }
+  document.getElementById('adviceGrid').innerHTML=advices.map(a=>`<div class="advice-card"><div class="ai">${a.i}</div><h4>${a.t}</h4><p>${a.b}</p></div>`).join('');
+
+  // Timeline
+  const proj=[1,3,5,10];
+  const tLabels=['Now','1 Year','3 Years','5 Years','10 Years'];
+  const tVals=[savingsAmt,...proj.map(y=>Math.round(savingsAmt+monthlySavings*12*y*(1+0.07*y/10)))];
+  document.getElementById('savingsTimeline').innerHTML=tLabels.map((l,i)=>`
+    <div class="tl-item${i===0?' now':''}"><div class="tl-label">${l}</div><div class="tl-value">${fmt(tVals[i])}</div></div>`).join('');
+
+  // Growth chart
+  if(growthInst)growthInst.destroy();
+  const mArr=Array.from({length:13},(_,i)=>i);
+  const gData=mArr.map(m=>Math.round(savingsAmt+monthlySavings*m));
+  const gCtx=document.getElementById('growthChart').getContext('2d');
+  growthInst=new Chart(gCtx,{type:'line',data:{
+    labels:mArr.map(m=>m===0?'Now':'M'+m),
+    datasets:[
+      {label:'Savings',data:gData,borderColor:'#6c63ff',backgroundColor:'rgba(108,99,255,0.1)',fill:true,tension:0.4,borderWidth:2,pointRadius:0},
+      {label:'Price',data:mArr.map(()=>price),borderColor:'#ff6b6b',borderDash:[6,4],borderWidth:1.5,pointRadius:0,fill:false}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+    scales:{x:{ticks:{color:'#6b68a0',font:{size:10}},grid:{color:'rgba(108,99,255,0.06)'}},
+    y:{ticks:{color:'#6b68a0',font:{size:10},callback:v=>'₹'+Math.round(v/1000)+'k'},grid:{color:'rgba(108,99,255,0.06)'}}}}
+  });
+
+  // Pie
+  if(pieInst)pieInst.destroy();
+  const pCtx=document.getElementById('pieChart').getContext('2d');
+  const pieDat=[Math.round(expenses),Math.round(Math.max(0,monthlySavings-emi)),Math.round(emi)];
+  const pieColors=['#6c63ff','#22d3a3','#fbbf24'];
+  const pieLabels=['Expenses','Net Savings','EMI'];
+  pieInst=new Chart(pCtx,{type:'doughnut',data:{labels:pieLabels,datasets:[{data:pieDat,backgroundColor:pieColors,borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},cutout:'60%'}});
+  document.getElementById('pieLegend').innerHTML=pieLabels.map((l,i)=>`<span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:2px;background:${pieColors[i]}"></span><span style="color:var(--text3);font-size:11px">${l} ${fmt(pieDat[i])}</span></span>`).join('');
+
+  // Bar
+  if(barInst)barInst.destroy();
+  const bCtx=document.getElementById('barChart').getContext('2d');
+  barInst=new Chart(bCtx,{type:'bar',data:{
+    labels:['Before EMI','After EMI'],
+    datasets:[{data:[Math.round(monthlySavings),Math.round(Math.max(0,monthlySavings-emi))],backgroundColor:['#22d3a3','#6c63ff'],borderRadius:8,borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+    scales:{x:{ticks:{color:'#6b68a0'},grid:{display:false}},y:{ticks:{color:'#6b68a0',callback:v=>'₹'+Math.round(v/1000)+'k'},grid:{color:'rgba(108,99,255,0.06)'}}}}
+  });
+
+  document.getElementById('resultWrap').classList.add('show');
+  setTimeout(()=>document.getElementById('resultWrap').scrollIntoView({behavior:'smooth',block:'start'}),100);
+  toast('Analysis complete!','success');
+}
+
+// ============================================================
+// FINANCIAL TOOLS
+// ============================================================
+let sipChartInst=null;
+function initTools(){calcSIP();calcFD();calcCI();calcRetirement();calcInflation();calcTax();calcLoanElig();calcCar();calcHouse();calcCollege();calcVacation();calcWedding();}
+
+function openTool(id,btn){
+  document.querySelectorAll('#page-tools .tab-pane').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('#page-tools .tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tool-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function calcSIP(){
+  const amt=safe(parseFloat(document.getElementById('sip-amt').value));
+  const rate=safe(parseFloat(document.getElementById('sip-rate').value));
+  const years=safe(parseInt(document.getElementById('sip-years').value));
+  const n=years*12,r=rate/12/100;
+  const fv=r>0?amt*(Math.pow(1+r,n)-1)/r*(1+r):amt*n;
+  const invested=amt*n;
+  document.getElementById('sip-res').innerHTML=resultsHTML([
+    ['Monthly SIP',fmt(amt)],['Duration',years+' years'],
+    ['Total Invested',fmt(invested)],['Estimated Returns',fmt(fv-invested)],['Maturity Value',fmt(fv)],
+  ]);
+  const labels=Array.from({length:years+1},(_,i)=>i+'yr');
+  const sipData=labels.map((_,i)=>{const ni=i*12;return r>0?Math.round(amt*(Math.pow(1+r,ni)-1)/r*(1+r)):amt*ni;});
+  const invData=labels.map((_,i)=>amt*i*12);
+  if(sipChartInst)sipChartInst.destroy();
+  const ctx=document.getElementById('sipChart')?.getContext('2d');
+  if(ctx)sipChartInst=new Chart(ctx,{type:'line',data:{labels,datasets:[
+    {label:'Portfolio Value',data:sipData,borderColor:'#6c63ff',backgroundColor:'rgba(108,99,255,0.1)',fill:true,tension:0.4,borderWidth:2,pointRadius:0},
+    {label:'Amount Invested',data:invData,borderColor:'#22d3a3',borderDash:[5,4],borderWidth:1.5,pointRadius:0,fill:false}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+  scales:{x:{ticks:{color:'#6b68a0',font:{size:10}},grid:{color:'rgba(108,99,255,0.06)'}},
+  y:{ticks:{color:'#6b68a0',font:{size:10},callback:v=>v>=100000?'₹'+(v/100000).toFixed(1)+'L':'₹'+Math.round(v/1000)+'k'},grid:{color:'rgba(108,99,255,0.06)'}}}}});
+}
+
+function calcFD(){
+  const p=safe(parseFloat(document.getElementById('fd-p').value));
+  const r=safe(parseFloat(document.getElementById('fd-r').value));
+  const y=safe(parseInt(document.getElementById('fd-y').value));
+  const n=parseInt(document.getElementById('fd-comp').value)||12;
+  const maturity=p*Math.pow(1+r/(n*100),n*y);
+  document.getElementById('fd-res').innerHTML=resultsHTML([
+    ['Principal',fmt(p)],['Duration',y+' years'],
+    ['Interest Earned',fmt(maturity-p)],['Maturity Amount',fmt(maturity)],
+    ['Effective Annual Yield',Math.round(((maturity/p)**(1/y)-1)*10000)/100+'% p.a.'],
+  ]);
+}
+
+function calcCI(){
+  const p=safe(parseFloat(document.getElementById('ci-p').value));
+  const r=safe(parseFloat(document.getElementById('ci-r').value));
+  const y=safe(parseInt(document.getElementById('ci-y').value));
+  const n=parseInt(document.getElementById('ci-comp').value)||1;
+  const amount=p*Math.pow(1+r/(n*100),n*y);
+  document.getElementById('ci-res').innerHTML=resultsHTML([
+    ['Principal',fmt(p)],['Total Interest',fmt(amount-p)],['Final Amount',fmt(amount)],
+    ['CAGR',r.toFixed(2)+'%'],
+  ]);
+}
+
+function calcRetirement(){
+  const age=safe(parseInt(document.getElementById('ret-age').value))||28;
+  const retAge=safe(parseInt(document.getElementById('ret-retage').value))||60;
+  const exp=safe(parseFloat(document.getElementById('ret-exp').value));
+  const sav=safe(parseFloat(document.getElementById('ret-sav').value));
+  const ret=safe(parseFloat(document.getElementById('ret-ret').value));
+  const inf=safe(parseFloat(document.getElementById('ret-inf').value));
+  const years=Math.max(1,retAge-age);
+  const futureExp=exp*Math.pow(1+inf/100,years);
+  const corpusNeeded=futureExp*12*25;
+  const projSav=sav*Math.pow(1+ret/100,years);
+  const gap=Math.max(0,corpusNeeded-projSav);
+  const monthlySIP=gap>0?calcEMI(gap,ret,years*12)*((ret/12/100)/(Math.pow(1+ret/12/100,years*12)-1)):0;
+  document.getElementById('ret-res').innerHTML=resultsHTML([
+    ['Years to Retirement',years],['Current Monthly Expenses',fmt(exp)],
+    ['Future Monthly Expenses',fmt(futureExp)],['Corpus Required',fmt(corpusNeeded)],
+    ['Projected Savings Growth',fmt(projSav)],['Gap to Fill',fmt(gap)],
+    ['Monthly SIP Needed',fmt(monthlySIP<0?0:monthlySIP)],
+  ]);
+}
+
+function calcInflation(){
+  const amt=safe(parseFloat(document.getElementById('inf-amt').value));
+  const rate=safe(parseFloat(document.getElementById('inf-rate').value));
+  const years=safe(parseInt(document.getElementById('inf-years').value));
+  const future=amt*Math.pow(1+rate/100,years);
+  const purchasingPower=amt/Math.pow(1+rate/100,years);
+  document.getElementById('inf-res').innerHTML=resultsHTML([
+    ['Today\'s Value',fmt(amt)],
+    ['Future Value in '+years+' years',fmt(future)],
+    ['Purchasing Power of '+fmt(amt)+' today',fmt(purchasingPower)+' in future terms'],
+    ['Inflation Rate',rate+'% p.a.'],
+    ['Real Returns Needed to Beat Inflation',rate+'%+'],
+  ]);
+}
+
+function calcTax(){
+  const income=safe(parseFloat(document.getElementById('tax-inc').value));
+  const regime=document.getElementById('tax-regime').value;
+  const dec80c=safe(parseFloat(document.getElementById('tax-80c').value));
+  const hra=safe(parseFloat(document.getElementById('tax-hra').value));
+  let taxable=income;
+  let tax=0;
+  if(regime==='new'){
+    taxable=income-75000;
+    if(taxable<=300000)tax=0;
+    else if(taxable<=700000)tax=(taxable-300000)*0.05;
+    else if(taxable<=1000000)tax=20000+(taxable-700000)*0.1;
+    else if(taxable<=1200000)tax=50000+(taxable-1000000)*0.15;
+    else if(taxable<=1500000)tax=80000+(taxable-1200000)*0.2;
+    else tax=140000+(taxable-1500000)*0.3;
+  } else {
+    taxable=income-Math.min(dec80c,150000)-hra-50000;
+    if(taxable<=250000)tax=0;
+    else if(taxable<=500000)tax=(taxable-250000)*0.05;
+    else if(taxable<=1000000)tax=12500+(taxable-500000)*0.2;
+    else tax=112500+(taxable-1000000)*0.3;
+  }
+  const cess=tax*0.04;
+  const total=Math.max(0,tax+cess);
+  document.getElementById('tax-res').innerHTML=resultsHTML([
+    ['Gross Income',fmt(income)],
+    ['Taxable Income',fmt(Math.max(0,taxable))],
+    ['Income Tax',fmt(Math.max(0,tax))],
+    ['Health & Education Cess (4%)',fmt(cess)],
+    ['Total Tax Payable',fmt(total)],
+    ['Monthly Take-Home',fmt((income-total)/12)],
+    ['Effective Tax Rate',Math.round((total/income)*100)+'%'],
+  ]);
+}
+
+function calcLoanElig(){
+  const inc=safe(parseFloat(document.getElementById('le-inc').value));
+  const obl=safe(parseFloat(document.getElementById('le-obl').value));
+  const rate=safe(parseFloat(document.getElementById('le-rate').value));
+  const tenure=safe(parseInt(document.getElementById('le-tenure').value));
+  const maxEMI=(inc-obl)*0.4;
+  const r=rate/12/100,m=tenure*12;
+  const loanElig=r>0?maxEMI*(Math.pow(1+r,m)-1)/(r*Math.pow(1+r,m)):maxEMI*m;
+  document.getElementById('le-res').innerHTML=resultsHTML([
+    ['Monthly Income',fmt(inc)],['Existing Obligations',fmt(obl)],
+    ['Max EMI Capacity (40%)',fmt(maxEMI)],
+    ['Loan Eligibility',fmt(loanElig)],
+    ['Recommended Max',fmt(loanElig*0.8)],
+  ]);
+}
+
+function calcCar(){
+  const p=safe(parseFloat(document.getElementById('c-price').value));
+  const d=safe(parseFloat(document.getElementById('c-down').value));
+  const r=safe(parseFloat(document.getElementById('c-rate').value));
+  const t=safe(parseInt(document.getElementById('c-tenure').value));
+  const loan=Math.max(0,p-d);
+  const emi=calcEMI(loan,r,t*12);
+  const totalInt=emi*t*12-loan;
+  document.getElementById('car-res').innerHTML=resultsHTML([
+    ['Loan Amount',fmt(loan)],['Monthly EMI',fmt(emi)],
+    ['Total Interest',fmt(totalInt)],['Total Cost',fmt(emi*t*12+d)],
+    ['Est. Monthly Fuel',fmt(Math.round(p/100)*1.2)],
+    ['Annual Insurance',fmt(p*0.03)],['Annual Maintenance',fmt(p*0.015)],
+    ['True Monthly Cost',fmt(emi+(p/100)*1.2+p*0.03/12+p*0.015/12)],
+  ]);
+}
+
+function calcHouse(){
+  const p=safe(parseFloat(document.getElementById('h-price').value));
+  const d=safe(parseFloat(document.getElementById('h-down').value));
+  const r=safe(parseFloat(document.getElementById('h-rate').value));
+  const t=safe(parseInt(document.getElementById('h-tenure').value));
+  const loan=Math.max(0,p-d);
+  const emi=calcEMI(loan,r,t*12);
+  document.getElementById('house-res').innerHTML=resultsHTML([
+    ['Loan Amount',fmt(loan)],['Monthly EMI',fmt(emi)],
+    ['Total Interest',fmt(emi*t*12-loan)],['Total Loan Cost',fmt(emi*t*12)],
+    ['Registration (1%)',fmt(p*0.01)],['Stamp Duty (6%)',fmt(p*0.06)],
+    ['Annual Property Tax',fmt(p*0.005)],['All-In Cost',fmt(p*1.07)],
+  ]);
+}
+
+function calcCollege(){
+  const t=safe(parseFloat(document.getElementById('e-tuition').value));
+  const h=safe(parseFloat(document.getElementById('e-hostel').value));
+  const l=safe(parseFloat(document.getElementById('e-living').value));
+  const y=safe(parseInt(document.getElementById('e-years').value));
+  const annual=t+h+l;
+  document.getElementById('college-res').innerHTML=resultsHTML([
+    ['Annual Tuition',fmt(t)],['Annual Hostel',fmt(h)],['Annual Living',fmt(l)],
+    ['Annual Total',fmt(annual)],['Duration',y+' years'],
+    ['Total Cost',fmt(annual*y)],['Monthly Savings Needed',fmt(annual*y/(y*12))],
+  ]);
+}
+
+function calcVacation(){
+  const fl=safe(parseFloat(document.getElementById('v-flights').value));
+  const ht=safe(parseFloat(document.getElementById('v-hotel').value));
+  const fd=safe(parseFloat(document.getElementById('v-food').value));
+  const sh=safe(parseFloat(document.getElementById('v-shop').value));
+  const total=fl+ht+fd+sh;
+  document.getElementById('vacation-res').innerHTML=resultsHTML([
+    ['Flights',fmt(fl)],['Hotel',fmt(ht)],['Food & Local',fmt(fd)],
+    ['Shopping',fmt(sh)],['Total Budget',fmt(total)],['With 20% Buffer',fmt(total*1.2)],
+  ]);
+}
+
+function calcWedding(){
+  const v=safe(parseFloat(document.getElementById('w-venue').value));
+  const f=safe(parseFloat(document.getElementById('w-food').value));
+  const d=safe(parseFloat(document.getElementById('w-decor').value));
+  const p=safe(parseFloat(document.getElementById('w-photo').value));
+  const c=safe(parseFloat(document.getElementById('w-cloth').value));
+  const m=safe(parseFloat(document.getElementById('w-misc').value));
+  const total=v+f+d+p+c+m;
+  document.getElementById('wedding-res').innerHTML=resultsHTML([
+    ['Venue',fmt(v)],['Catering',fmt(f)],['Decoration',fmt(d)],
+    ['Photography',fmt(p)],['Clothing & Jewelry',fmt(c)],['Miscellaneous',fmt(m)],
+    ['Total Budget',fmt(total)],['With 15% Buffer',fmt(total*1.15)],
+  ]);
+}
+
+// ============================================================
+// COMMUNITY
+// ============================================================
+const AVATAR_COLORS=['#6c63ff','#22d3a3','#fbbf24','#ff6b6b','#38bdf8','#a78bfa'];
+function getAvatar(name){const c=AVATAR_COLORS[name.charCodeAt(0)%AVATAR_COLORS.length];return `<div class="avatar" style="background:${c}20;color:${c}">${name.slice(0,2).toUpperCase()}</div>`;}
+
+const SEED_POSTS=[
+  {id:1,name:'Rohan K',cat:'🎯 Goal Update',text:'Just crossed ₹5 lakhs in savings for my first car! Target is ₹8L for Hyundai Creta. 3 more months to go 🚗',time:'2h ago',likes:24,liked:false,comments:['Amazing progress! Creta is a great choice.','Keep going!']},
+  {id:2,name:'Priya S',cat:'💭 Question',text:'Is it worth taking an education loan for MBA from a Tier-2 college? Total cost ₹12L. Placement average ₹8L/year. Please share thoughts!',time:'4h ago',likes:18,liked:false,comments:['ROI depends on the specific college. Check placement consistency.']},
+  {id:3,name:'Amit V',cat:'🏆 Achievement',text:'Paid off my ₹3.5L credit card debt! Took 14 months of strict budgeting. Zero debt feels AMAZING 🎉',time:'6h ago',likes:47,liked:false,comments:['Incredible discipline! Congrats!','Inspiring 💪']},
+  {id:4,name:'Sneha M',cat:'💡 Tip',text:'Pro tip: Use the 50-30-20 rule! 50% needs, 30% wants, 20% savings. Changed my financial life in 6 months.',time:'1d ago',likes:31,liked:false,comments:['Classic rule, works well for most people.']},
+  {id:5,name:'Dev P',cat:'🔥 Discussion',text:'iPhone 16 vs Samsung S25 — both around ₹80K. Which is the smarter buy for value retention? Thinking 3 year perspective.',time:'1d ago',likes:12,liked:false,comments:['iPhones hold value longer in India resale market.','S25 has better hardware specs for the price!']},
+];
+
+let posts=[];
+try{posts=JSON.parse(localStorage.getItem('ciai_posts')||'null')||[...SEED_POSTS];}catch(e){posts=[...SEED_POSTS];}
+
+function savePosts(){try{localStorage.setItem('ciai_posts',JSON.stringify(posts));}catch(e){}}
+
+function submitPost(){
+  const text=document.getElementById('postText').value.trim();
+  if(!text){toast('Write something first!','error');return;}
+  const name=document.getElementById('postName').value.trim()||'Anonymous';
+  const cat=document.getElementById('postCat').value;
+  const post={id:Date.now(),name,cat,text,time:'just now',likes:0,liked:false,comments:[]};
+  posts.unshift(post);savePosts();
+  document.getElementById('postText').value='';
+  renderFeed();toast('Posted!','success');
+}
+
+function renderFeed(){
+  const filter=document.getElementById('feedFilter').value;
+  const filtered=filter==='all'?posts:posts.filter(p=>p.cat===filter);
+  let html='';
+  filtered.forEach((p,i)=>{
+    html+=`<div class="post-card">
+      <div class="post-header">
+        ${getAvatar(p.name)}
+        <div class="post-meta">
+          <div class="post-name">${sanitizeText(p.name)}</div>
+          <div class="post-time">${p.time}</div>
+        </div>
+        <span class="post-tag" style="background:rgba(108,99,255,0.1);color:var(--accent2)">${p.cat}</span>
+      </div>
+      <div class="post-body">${sanitizeText(p.text)}</div>
+      <div class="post-actions">
+        <button class="post-action ${p.liked?'liked':''}" onclick="likePost(${p.id})">❤️ ${p.likes}</button>
+        <button class="post-action" onclick="toggleComments(${p.id})">💬 ${p.comments.length}</button>
+      </div>
+      <div id="cmts-${p.id}" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--border3)">
+        ${p.comments.map(c=>`<div style="font-size:12px;color:var(--text2);padding:6px 0;border-bottom:1px solid var(--border3)">${sanitizeText(c)}</div>`).join('')}
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <input type="text" id="cmtInput-${p.id}" placeholder="Add a comment..." style="flex:1;background:var(--bg2);border:1px solid var(--border2);border-radius:20px;padding:7px 14px;color:var(--text);font-size:12px;outline:none" maxlength="200" onkeydown="if(event.key==='Enter')addComment(${p.id})">
+          <button class="btn btn-sm btn-secondary" onclick="addComment(${p.id})">Post</button>
+        </div>
+      </div>
+    </div>`;
+    if((i+1)%3===0)html+=`<div class="ad-banner-wrap"><span class="ad-label">Advertisement</span></div>`;
+  });
+  document.getElementById('communityFeed').innerHTML=html||'<div style="text-align:center;padding:40px;color:var(--text3)">No posts yet. Be the first!</div>';
+}
+
+function likePost(id){
+  const p=posts.find(x=>x.id===id);
+  if(p){p.liked=!p.liked;p.likes+=p.liked?1:-1;savePosts();renderFeed();}
+}
+
+function toggleComments(id){
+  const el=document.getElementById('cmts-'+id);
+  if(el)el.style.display=el.style.display==='none'?'block':'none';
+}
+
+function addComment(id){
+  const inp=document.getElementById('cmtInput-'+id);
+  const text=inp?.value.trim();
+  if(!text)return;
+  const p=posts.find(x=>x.id===id);
+  if(p){p.comments.push(text);savePosts();renderFeed();toast('Comment added!','success');}
+}
+
+function sanitizeText(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// POLLS
+const POLLS=[
+  {id:'p1',q:'Which is the smarter buy right now?',opts:['iPhone 16 Pro','Samsung S25 Ultra','OnePlus 13','Pixel 9 Pro'],votes:[34,28,18,12]},
+  {id:'p2',q:'Best first car for a fresh graduate in India?',opts:['Maruti Swift','Hyundai i20','Tata Punch','Wait & save more'],votes:[42,28,19,11]},
+  {id:'p3',q:'How do you save money best?',opts:['SIP every month','Fixed Deposit','Liquid fund','Just keep in bank'],votes:[51,24,15,10]},
+];
+
+function initPolls(){
+  const stored=JSON.parse(localStorage.getItem('ciai_polls')||'null')||POLLS;
+  document.getElementById('pollsContainer').innerHTML=stored.map(poll=>{
+    const total=poll.votes.reduce((a,b)=>a+b,0);
+    const voted=localStorage.getItem('vote_'+poll.id);
+    return`<div class="poll-card">
+      <div class="poll-q">${poll.q}</div>
+      ${poll.opts.map((opt,i)=>{
+        const pct=total>0?Math.round((poll.votes[i]/total)*100):0;
+        return`<div class="poll-opt ${voted?'voted':''}" onclick="vote('${poll.id}',${i})">
+          <div class="poll-fill" style="width:${voted?pct:0}%"></div>
+          <div class="poll-opt-text"><span>${opt}</span>${voted?`<span class="poll-pct">${pct}%</span>`:''}</div>
+        </div>`;
+      }).join('')}
+      <div style="font-size:11px;color:var(--text3);margin-top:8px;font-family:'DM Mono',monospace">${total} votes</div>
+    </div>`;
+  }).join('');
+}
+
+function vote(pollId,optIdx){
+  if(localStorage.getItem('vote_'+pollId)){toast('Already voted!','info');return;}
+  const polls=JSON.parse(localStorage.getItem('ciai_polls')||'null')||POLLS;
+  const poll=polls.find(p=>p.id===pollId);
+  if(poll){poll.votes[optIdx]++;localStorage.setItem('ciai_polls',JSON.stringify(polls));localStorage.setItem('vote_'+pollId,'1');initPolls();toast('Vote recorded!','success');}
+}
+
+// ============================================================
+// CHAT
+// ============================================================
+const ROOMS=[
+  {id:'students',name:'🎓 Students',count:'1,204',color:'#6c63ff'},
+  {id:'cars',name:'🚗 Car Buyers',count:'847',color:'#22d3a3'},
+  {id:'home',name:'🏠 Home Buyers',count:'623',color:'#fbbf24'},
+  {id:'jobs',name:'💼 Job Seekers',count:'512',color:'#38bdf8'},
+  {id:'general',name:'💬 General Finance',count:'2,103',color:'#a78bfa'},
+];
+
+const SEED_MSGS={
+  students:[
+    {name:'Ananya',msg:'Anyone else considering education loan for IIM? Heard placements are ₹20L avg.',time:'2m'},
+    {name:'Raj',msg:'IIM ROI is solid if you get top recruiters. Avoid Tier-3 though.',time:'4m'},
+    {name:'Priya',msg:'BITS self-financing is ₹22L total. Worth it for CS?',time:'7m'},
+  ],
+  cars:[
+    {name:'Vikram',msg:'Anyone compared Creta vs Seltos? Both around ₹11L base.',time:'1m'},
+    {name:'Anita',msg:'Got Creta last month. 20km/L highway. Very happy!',time:'5m'},
+    {name:'Suresh',msg:'EMI on Nexon EV is very manageable. Go electric!',time:'9m'},
+  ],
+  home:[
+    {name:'Deepak',msg:'Delhi NCR prices insane. ₹80L for 2BHK in Noida. Is it worth it?',time:'3m'},
+    {name:'Meera',msg:'Bangalore outskirts are better value. ₹60L for decent 2BHK.',time:'6m'},
+    {name:'Karan',msg:'Always check RERA registration before booking. Non-negotiable.',time:'10m'},
+  ],
+  jobs:[
+    {name:'Ritika',msg:'Got ₹8L offer from Infosys. Is this good for 2 years experience?',time:'2m'},
+    {name:'Arnav',msg:'For IT, ₹8L is decent. Negotiate for ₹9-10L.',time:'5m'},
+    {name:'Pooja',msg:'Switch every 2 years for 30-40% hike. Loyalty rarely pays.',time:'8m'},
+  ],
+  general:[
+    {name:'Sandeep',msg:'Index funds vs direct stocks for ₹10K monthly SIP. Thoughts?',time:'1m'},
+    {name:'Nisha',msg:'Index funds win for most people. Less stress, similar returns over 10yr.',time:'3m'},
+    {name:'Mohit',msg:'I do 70% index + 30% direct stocks. Best of both worlds.',time:'6m'},
+  ],
+};
+
+let activeRoom='cars';
+let roomMsgs={};
+ROOMS.forEach(r=>{roomMsgs[r.id]=[...(SEED_MSGS[r.id]||[])];});
+
+function initChat(){
+  document.getElementById('roomList').innerHTML=ROOMS.map(r=>`
+    <div class="room-item ${r.id===activeRoom?'active':''}" onclick="switchRoom('${r.id}')">
+      <div class="room-name">${r.name}</div>
+      <div class="room-count">${r.count} online</div>
+    </div>`).join('');
+  renderChatMessages();
+}
+
+function switchRoom(id){
+  activeRoom=id;
+  const room=ROOMS.find(r=>r.id===id);
+  document.getElementById('chatRoomTitle').textContent=room.name;
+  document.getElementById('chatOnline').textContent=room.count+' online';
+  initChat();
+}
+
+function renderChatMessages(){
+  const msgs=roomMsgs[activeRoom]||[];
+  const myName=document.getElementById('chatName').value||'You';
+  document.getElementById('chatMessages').innerHTML=msgs.slice(-30).map(m=>{
+    const own=m.own;
+    return`<div class="chat-msg ${own?'own':''}">
+      ${!own?getAvatar(m.name):''}
+      <div>
+        <div class="msg-name">${own?'You':m.name} · ${m.time}</div>
+        <div class="msg-bubble">${sanitizeText(m.msg)}</div>
+      </div>
+      ${own?getAvatar(myName):''}
+    </div>`;
+  }).join('');
+  const msgs_el=document.getElementById('chatMessages');
+  msgs_el.scrollTop=msgs_el.scrollHeight;
+}
+
+function sendChat(){
+  const inp=document.getElementById('chatInput');
+  const msg=inp.value.trim();
+  if(!msg)return;
+  roomMsgs[activeRoom].push({name:'You',msg,time:'now',own:true});
+  inp.value='';
+  renderChatMessages();
+  // Simulate reply after delay
+  const botReplies=['Great question! The community is discussing this.','Interesting perspective! Many buyers face this dilemma.','Good point. Have you checked the calculator above?','Smart thinking! What is your monthly budget?'];
+  setTimeout(()=>{
+    const bots=['Aarav','Divya','Sanjay','Meena','Rohan'];
+    const name=bots[Math.floor(Math.random()*bots.length)];
+    roomMsgs[activeRoom].push({name,msg:botReplies[Math.floor(Math.random()*botReplies.length)],time:'just now',own:false});
+    renderChatMessages();
+  },1200+Math.random()*1200);
+}
+
+function clearChat(){roomMsgs[activeRoom]=SEED_MSGS[activeRoom]||[];renderChatMessages();}
+
+// ============================================================
+// GOAL TRACKER
+// ============================================================
+let goals=[];
+try{goals=JSON.parse(localStorage.getItem('ciai_goals')||'[]');}catch(e){goals=[];}
+
+function saveGoals(){try{localStorage.setItem('ciai_goals',JSON.stringify(goals));}catch(e){}}
+
+function addGoal(){
+  const name=document.getElementById('goal-name').value.trim();
+  const target=safe(parseFloat(document.getElementById('goal-target').value));
+  const current=safe(parseFloat(document.getElementById('goal-current').value));
+  const monthly=safe(parseFloat(document.getElementById('goal-monthly').value));
+  if(!name){toast('Enter a goal name','error');return;}
+  if(target<=0){toast('Enter a valid target amount','error');return;}
+  goals.push({id:Date.now(),name,target,current,monthly,created:new Date().toLocaleDateString('en-IN')});
+  saveGoals();
+  ['goal-name','goal-target','goal-current','goal-monthly'].forEach(id=>{document.getElementById(id).value='';});
+  renderGoals();toast('Goal added!','success');
+}
+
+function updateGoalProgress(id){
+  const inp=document.getElementById('goal-add-'+id);
+  const amt=safe(parseFloat(inp?.value||0));
+  if(amt<=0){toast('Enter a valid amount','error');return;}
+  const g=goals.find(x=>x.id===id);
+  if(g){g.current=Math.min(g.target,g.current+amt);saveGoals();renderGoals();toast('+'+fmt(amt)+' added to '+g.name,'success');}
+}
+
+function deleteGoal(id){
+  goals=goals.filter(g=>g.id!==id);saveGoals();renderGoals();toast('Goal removed','info');
+}
+
+function renderGoals(){
+  const el=document.getElementById('goalsList');
+  const empty=document.getElementById('goalsEmpty');
+  const summary=document.getElementById('goalsSummary');
+  if(!goals.length){el.innerHTML='';empty.style.display='block';summary.innerHTML='<div style="color:var(--text3);font-size:13px">No goals yet.</div>';return;}
+  empty.style.display='none';
+  const totalTarget=goals.reduce((a,g)=>a+g.target,0);
+  const totalSaved=goals.reduce((a,g)=>a+g.current,0);
+  summary.innerHTML=`
+    <div class="metric" style="margin-bottom:10px"><div class="metric-label">Total Goals</div><div class="metric-value blue">${goals.length}</div></div>
+    <div class="metric" style="margin-bottom:10px"><div class="metric-label">Total Target</div><div class="metric-value">${fmt(totalTarget)}</div></div>
+    <div class="metric"><div class="metric-label">Total Saved</div><div class="metric-value green">${fmt(totalSaved)}</div></div>`;
+
+  el.innerHTML=goals.map(g=>{
+    const pct=Math.min(100,Math.round((g.current/g.target)*100));
+    const remaining=Math.max(0,g.target-g.current);
+    const eta=g.monthly>0?Math.ceil(remaining/g.monthly):null;
+    return`<div class="goal-card">
+      <div class="goal-header">
+        <div>
+          <div class="goal-title">${sanitizeText(g.name)}</div>
+          <div class="goal-amount">Started ${g.created}</div>
+        </div>
+        <button class="btn btn-sm btn-danger" onclick="deleteGoal(${g.id})">×</button>
+      </div>
+      <div class="goal-progress-label">
+        <span>Progress: ${pct}%</span>
+        <span>${fmt(g.current)} / ${fmt(g.target)}</span>
+      </div>
+      <div class="goal-track"><div class="goal-bar" style="width:${pct}%"></div></div>
+      <div class="goal-eta">
+        ${eta?`⏱️ ${eta} months to goal at ${fmt(g.monthly)}/month`:'Set monthly contribution to see timeline.'}
+        ${pct>=100?'<span style="color:var(--green);font-weight:700">🎉 Goal Reached!</span>':''}
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <input type="number" id="goal-add-${g.id}" placeholder="Add amount..." style="flex:1;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius3);padding:8px 12px;color:var(--text);font-size:13px;outline:none" min="0">
+        <button class="btn btn-sm btn-success" onclick="updateGoalProgress(${g.id})">+ Add</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ============================================================
+// SEO GUIDES
+// ============================================================
+const SEO_GUIDES=[
+  {cat:'Phones',title:'Can I Afford iPhone 16 Pro Max?',price:159900,desc:'Is the ₹1.6L flagship worth it? Full affordability analysis.',keywords:['iphone','apple','phone']},
+  {cat:'Phones',title:'Can I Afford Samsung Galaxy S25 Ultra?',price:134999,desc:'Samsung\'s best vs your budget. Detailed breakdown.',keywords:['samsung','galaxy','phone']},
+  {cat:'Phones',title:'Can I Afford OnePlus 13?',price:69999,desc:'The premium OnePlus flagship. Is ₹70K justifiable?',keywords:['oneplus','phone']},
+  {cat:'Cars',title:'Can I Afford a BMW 3 Series?',price:4699000,desc:'Luxury car dream vs financial reality. Complete EMI analysis.',keywords:['bmw','car','luxury']},
+  {cat:'Cars',title:'Can I Afford a BMW X5?',price:9499000,desc:'₹95L SUV — salary, EMI, and hidden costs.',keywords:['bmw','x5','suv']},
+  {cat:'Cars',title:'Can I Afford a Mercedes C-Class?',price:5799000,desc:'Stuttgart luxury vs your monthly budget.',keywords:['mercedes','car','luxury']},
+  {cat:'Cars',title:'Can I Afford a Hyundai Creta?',price:1099000,desc:'India\'s most popular SUV affordability guide.',keywords:['hyundai','creta','car']},
+  {cat:'Cars',title:'Can I Afford a Tata Nexon EV?',price:999000,desc:'Going electric — full cost of EV ownership.',keywords:['tata','nexon','ev','electric']},
+  {cat:'Colleges',title:'Can I Afford IIT Delhi?',price:900000,desc:'IIT fees, hostel, living — total 4-year cost breakdown.',keywords:['iit','delhi','college','engineering']},
+  {cat:'Colleges',title:'Can I Afford IIM Ahmedabad MBA?',price:3000000,desc:'₹30L MBA — ROI analysis and loan planning.',keywords:['iim','mba','management']},
+  {cat:'Colleges',title:'Can I Afford BITS Pilani?',price:2200000,desc:'BITS total cost guide — fees, hostel, all-in.',keywords:['bits','pilani','college']},
+  {cat:'Colleges',title:'Can I Afford MBBS at AIIMS?',price:1500000,desc:'AIIMS fees are affordable — but living costs add up.',keywords:['aiims','mbbs','medical']},
+  {cat:'Colleges',title:'Can I Afford ISB Hyderabad MBA?',price:4000000,desc:'₹40L MBA — is ISB worth the investment?',keywords:['isb','hyderabad','mba']},
+  {cat:'Laptops',title:'Can I Afford MacBook Pro 16 M4?',price:299900,desc:'Apple\'s flagship laptop — is ₹3L justified?',keywords:['macbook','apple','laptop']},
+  {cat:'Laptops',title:'Can I Afford MacBook Air M3?',price:114900,desc:'Best MacBook for most — complete buying guide.',keywords:['macbook','air','laptop']},
+  {cat:'Laptops',title:'Can I Afford Dell XPS 15?',price:189990,desc:'Dell\'s premium Windows laptop affordability analysis.',keywords:['dell','xps','laptop']},
+  {cat:'Housing',title:'Can I Afford a House in Delhi?',price:8000000,desc:'Delhi real estate guide — EMI, stamp duty, all-in cost.',keywords:['house','delhi','property']},
+  {cat:'Housing',title:'Can I Afford a House in Mumbai?',price:12000000,desc:'Mumbai home buying — the full financial picture.',keywords:['house','mumbai','property']},
+  {cat:'Housing',title:'Can I Afford a House in Bangalore?',price:7500000,desc:'Bangalore IT hub real estate affordability.',keywords:['house','bangalore','property']},
+  {cat:'Housing',title:'Can I Afford a Flat in Pune?',price:5500000,desc:'Pune 2BHK guide — costs, EMI, and neighborhoods.',keywords:['house','pune','flat','property']},
+];
+
+let activeGuideCat='All';
+
+function renderSeoPage(){
+  const cats=['All','Phones','Cars','Colleges','Laptops','Housing'];
+  document.getElementById('guideCats').innerHTML=cats.map(c=>`<button onclick="filterGuideCat('${c}',this)" class="badge ${c===activeGuideCat?'sel':''}">${c}</button>`).join('');
+  filterGuides('');
+}
+
+function filterGuideCat(cat,el){
+  activeGuideCat=cat;
+  document.querySelectorAll('#guideCats .badge').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+  filterGuides(document.getElementById('guideSearch')?.value||'');
+}
+
+function filterGuides(q){
+  const ql=q.toLowerCase();
+  const filtered=SEO_GUIDES.filter(g=>{
+    const catMatch=activeGuideCat==='All'||g.cat===activeGuideCat;
+    const textMatch=!ql||g.title.toLowerCase().includes(ql)||g.keywords.some(k=>k.includes(ql));
+    return catMatch&&textMatch;
+  });
+  document.getElementById('seoGrid').innerHTML=filtered.map(g=>`
+    <div class="seo-card" onclick="openSeoArticle(${JSON.stringify(g.title).replace(/'/g,"&#39;")},${g.price},'${g.cat}')">
+      <h4>${g.title}</h4>
+      <p>${g.desc}</p>
+      <div style="margin-top:8px;font-size:11px;color:var(--accent2);font-family:'DM Mono',monospace">${fmt(g.price)} · ${g.cat}</div>
+    </div>`).join('')||'<div style="color:var(--text3);grid-column:1/-1;text-align:center;padding:40px">No guides found for this search.</div>';
+}
+
+function openSeoArticle(title,price,cat){
+  const intRate={Housing:8.5,Cars:9.5,Phones:14,Laptops:13,Colleges:10}[cat]||12;
+  const emi5=calcEMI(price*0.8,intRate,60);
+  const salary_min=emi5*3.5;
+  const content=`
+    <h1 style="font-size:26px;font-weight:800;margin-bottom:12px;line-height:1.2">${title}</h1>
+    <div style="font-size:13px;color:var(--text3);margin-bottom:24px;font-family:'DM Mono',monospace">Category: ${cat} · Base Price: ${fmt(price)}</div>
+    <h2 style="font-size:18px;font-weight:700;margin:0 0 12px;color:var(--accent2)">Quick Summary</h2>
+    <div class="metrics-grid" style="margin-bottom:24px">
+      <div class="metric"><div class="metric-label">Price</div><div class="metric-value purple">${fmt(price)}</div></div>
+      <div class="metric"><div class="metric-label">Min Salary Needed</div><div class="metric-value amber">${fmt(salary_min)}/mo</div></div>
+      <div class="metric"><div class="metric-label">5-Year EMI</div><div class="metric-value">${fmt(emi5)}/mo</div></div>
+      <div class="metric"><div class="metric-label">20% Down Payment</div><div class="metric-value">${fmt(price*0.2)}</div></div>
+    </div>
+    <h2 style="font-size:18px;font-weight:700;margin:0 0 12px;color:var(--accent2)">Who can afford it?</h2>
+    <p style="color:var(--text2);line-height:1.8;margin-bottom:20px">
+      To comfortably afford a purchase of ${fmt(price)}, you should ideally have a monthly salary of at least ${fmt(salary_min)}, with existing savings of at least ${fmt(price*0.2)} for the down payment. Your total EMI obligations should not exceed 40% of your monthly income.
+    </p>
+    <h2 style="font-size:18px;font-weight:700;margin:0 0 12px;color:var(--accent2)">Hidden Costs to Consider</h2>
+    <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius2);padding:16px;margin-bottom:20px">
+      ${cat==='Cars'?`<div class="calc-row"><span>Annual Insurance</span><span>${fmt(price*0.03)}</span></div><div class="calc-row"><span>Annual Maintenance</span><span>${fmt(price*0.015)}</span></div><div class="calc-row"><span>Monthly Fuel</span><span>${fmt(price/100*1.2)}</span></div>`:''}
+      ${cat==='Housing'?`<div class="calc-row"><span>Stamp Duty (6%)</span><span>${fmt(price*0.06)}</span></div><div class="calc-row"><span>Registration (1%)</span><span>${fmt(price*0.01)}</span></div><div class="calc-row"><span>Annual Property Tax</span><span>${fmt(price*0.005)}</span></div>`:''}
+      ${cat==='Colleges'?`<div class="calc-row"><span>Annual Hostel</span><span>₹80,000–₹1,50,000</span></div><div class="calc-row"><span>Annual Living</span><span>₹60,000–₹1,20,000</span></div><div class="calc-row"><span>Books & Material</span><span>₹15,000–₹30,000/yr</span></div>`:''}
+      ${cat==='Phones'?`<div class="calc-row"><span>Screen Guard + Case</span><span>₹2,000–₹5,000</span></div><div class="calc-row"><span>AppleCare/Samsung Care</span><span>₹8,000–₹15,000</span></div><div class="calc-row"><span>Annual Repairs Risk</span><span>₹3,000–₹20,000</span></div>`:''}
+      <div class="calc-row"><span>Total Price with Loan</span><span>${fmt(emi5*60)}</span></div>
+    </div>
+    <h2 style="font-size:18px;font-weight:700;margin:0 0 12px;color:var(--accent2)">Our Recommendation</h2>
+    <p style="color:var(--text2);line-height:1.8;margin-bottom:24px">
+      Use our AI affordability calculator with your actual salary and expenses for a personalized analysis. Rules of thumb are useful, but your specific situation matters most.
+    </p>
+    <button class="btn btn-primary" onclick="closeSeoModal();goto('home')">⚡ Check My Affordability</button>
+  `;
+  document.getElementById('seoArticleContent').innerHTML=content;
+  document.getElementById('seoModal').style.display='block';
+  document.body.style.overflow='hidden';
+}
+
+function closeSeoModal(){
+  document.getElementById('seoModal').style.display='none';
+  document.body.style.overflow='';
+}
+
+// ============================================================
+// AD MANAGER — safe, deduplicated, memory-leak-free
+// ============================================================
+const AdManager=(()=>{
+  const loaded=new Set();
+  const containers={};
+
+  function loadScript(src,onload,async_=true,attrs={}){
+    if(loaded.has(src))return;
+    loaded.add(src);
+    const s=document.createElement('script');
+    s.src=src;
+    s.async=async_;
+    Object.keys(attrs).forEach(k=>s.setAttribute(k,attrs[k]));
+    if(onload)s.onload=onload;
+    s.onerror=()=>loaded.delete(src);
+    document.head.appendChild(s);
+  }
+
+  function renderBanner(containerId,key,w,h){
+    const el=document.getElementById(containerId);
+    if(!el||containers[containerId])return;
+    containers[containerId]=true;
+    const iframe=document.createElement('iframe');
+    iframe.style.cssText=`width:${w}px;height:${h}px;border:none;max-width:100%;display:block;margin:0 auto`;
+    iframe.srcdoc=`<html><body style="margin:0;background:#1a1a26;display:flex;align-items:center;justify-content:center;height:${h}px"><div style="font-size:11px;color:#6b68a0;font-family:monospace">Ad · ${w}×${h}</div></body></html>`;
+    el.appendChild(iframe);
+    // Load real ad script
+    window['atOptions']=window['atOptions']||{};
+    window['atOptions'].key=key;
+    window['atOptions'].format='iframe';
+    window['atOptions'].height=h;
+    window['atOptions'].width=w;
+    window['atOptions'].params={};
+    loadScript(`https://www.highperformanceformat.com/${key}/invoke.js`);
+  }
+
+  function renderNative(containerId,scriptSrc){
+    const el=document.getElementById(containerId);
+    if(!el||containers[containerId])return;
+    containers[containerId]=true;
+    loadScript(scriptSrc,null,true,{'data-cfasync':'false'});
+  }
+
+  function initAll(){
+    // Social bar — load once globally
+    loadScript('https://pl29614670.effectivecpmnetwork.com/be/22/ee/be22eebe29858113cd0fca81d604e586.js');
+    // Native ads
+    renderNative('ad-native-1','https://pl29614669.effectivecpmnetwork.com/599d167b6694cd6c99473d4fd6c16d8d/invoke.js');
+    renderNative('ad-native-2','https://pl29614669.effectivecpmnetwork.com/599d167b6694cd6c99473d4fd6c16d8d/invoke.js');
+    // Banner ads by placement
+    const isMobile=window.innerWidth<600;
+    if(isMobile){
+      renderBanner('ad-banner-top','45257f29a19a6920059854a3a1fb5749',320,50);
+      renderBanner('ad-result-top','45257f29a19a6920059854a3a1fb5749',320,50);
+      renderBanner('ad-mobile-sticky','45257f29a19a6920059854a3a1fb5749',320,50);
+    } else {
+      renderBanner('ad-banner-top','3489ac5bf8b770aa4c7b77f866cb4af1',468,60);
+      renderBanner('ad-result-top','3489ac5bf8b770aa4c7b77f866cb4af1',468,60);
+      renderBanner('ad-sidebar','9c9a56502ebfc9f9e62440259457b405',160,300);
+    }
+    renderBanner('ad-result-footer','5480ecd74cbb498452aec2224198c3e4',300,250);
+    renderBanner('ad-tools-top','3489ac5bf8b770aa4c7b77f866cb4af1',468,60);
+    renderBanner('ad-tools-footer','5480ecd74cbb498452aec2224198c3e4',300,250);
+    renderBanner('ad-comm-top','3489ac5bf8b770aa4c7b77f866cb4af1',468,60);
+    renderBanner('ad-comm-mid','5480ecd74cbb498452aec2224198c3e4',300,250);
+    renderBanner('ad-seo-top','3489ac5bf8b770aa4c7b77f866cb4af1',468,60);
+  }
+
+  return{init:initAll};
+})();
+
+// ============================================================
+// ANALYTICS HOOKS (IDs injected externally)
+// ============================================================
+window.Analytics={
+  init(gaId,clarityId,fbPixelId){
+    if(gaId){const s=document.createElement('script');s.src=`https://www.googletagmanager.com/gtag/js?id=${gaId}`;s.async=true;document.head.appendChild(s);window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config',gaId);}
+    if(clarityId){(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script",clarityId);}
+    if(fbPixelId){!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init',fbPixelId);fbq('track','PageView');}
+  },
+  track(event,data){try{if(window.gtag)gtag('event',event,data);if(window.fbq)fbq('track',event,data);}catch(e){}}
+};
+
+// ============================================================
+// INIT
+// ============================================================
+window.addEventListener('DOMContentLoaded',()=>{
+  loadProfile();
+  initTools();
+  initPolls();
+  renderFeed();
+  initChat();
+  renderGoals();
+  renderSeoPage();
+  AdManager.init();
+  // Close modal on backdrop click
+  document.getElementById('seoModal').addEventListener('click',function(e){
+    if(e.target===this)closeSeoModal();
+  });
+});
+</script>
+</body>
+</html>

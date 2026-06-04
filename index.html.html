@@ -1,3 +1,7 @@
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,6 +16,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<!-- Google AdSense -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3510494087141765"
+     crossorigin="anonymous"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -1605,7 +1612,6 @@ function sendChat(){
   roomMsgs[activeRoom].push({name:'You',msg,time:'now',own:true});
   inp.value='';
   renderChatMessages();
-  // Simulate reply after delay
   const botReplies=['Great question! The community is discussing this.','Interesting perspective! Many buyers face this dilemma.','Good point. Have you checked the calculator above?','Smart thinking! What is your monthly budget?'];
   setTimeout(()=>{
     const bots=['Aarav','Divya','Sanjay','Meena','Rohan'];
@@ -1791,105 +1797,6 @@ function closeSeoModal(){
 }
 
 // ============================================================
-// AD MANAGER — safe, deduplicated, memory-leak-free
-// ============================================================
-const AdManager=(()=>{
-  const injected=new Set();
-
-  // Each banner MUST have its own atOptions + invoke.js — they cannot share a global.
-  // We inject an isolated <script> block per banner so they don't overwrite each other.
-  function injectBanner(containerId, key, w, h){
-    const el=document.getElementById(containerId);
-    if(!el || injected.has(containerId)) return;
-    injected.add(containerId);
-
-    // Wrapper sets explicit min-height so container is never 0px
-    el.style.minHeight=h+'px';
-    el.style.display='flex';
-    el.style.alignItems='center';
-    el.style.justifyContent='center';
-
-    // Each banner gets its own isolated inline script so atOptions is fresh per unit
-    const inlineScript = document.createElement('script');
-    inlineScript.text = `
-      (function(){
-        var atOptions={
-          key:'${key}',
-          format:'iframe',
-          height:${h},
-          width:${w},
-          params:{}
-        };
-        var invokeScript=document.createElement('script');
-        invokeScript.async=true;
-        invokeScript.src='https://www.highperformanceformat.com/${key}/invoke.js';
-        document.getElementById('${containerId}').appendChild(invokeScript);
-      })();
-    `;
-    el.appendChild(inlineScript);
-  }
-
-  // Native ad: inject the container div + async script pair
-  function injectNative(containerId, invokeJs){
-    const el=document.getElementById(containerId);
-    if(!el || injected.has(containerId)) return;
-    injected.add(containerId);
-
-    // Create the named container div the network expects
-    const nativeDiv=document.createElement('div');
-    nativeDiv.id='container-599d167b6694cd6c99473d4fd6c16d8d-'+containerId;
-    el.appendChild(nativeDiv);
-
-    const s=document.createElement('script');
-    s.async=true;
-    s.setAttribute('data-cfasync','false');
-    s.src=invokeJs;
-    el.appendChild(s);
-  }
-
-  // Social bar — one global load only
-  function injectSocialBar(){
-    if(injected.has('socialbar')) return;
-    injected.add('socialbar');
-    const s=document.createElement('script');
-    s.src='https://pl29614670.effectivecpmnetwork.com/be/22/ee/be22eebe29858113cd0fca81d604e586.js';
-    s.async=true;
-    document.head.appendChild(s);
-  }
-
-  function initAll(){
-    injectSocialBar();
-
-    // Native ads (effectivecpmnetwork)
-    injectNative('ad-native-1','https://pl29614669.effectivecpmnetwork.com/599d167b6694cd6c99473d4fd6c16d8d/invoke.js');
-    injectNative('ad-native-2','https://pl29614669.effectivecpmnetwork.com/599d167b6694cd6c99473d4fd6c16d8d/invoke.js');
-
-    const isMobile=window.innerWidth<600;
-
-    // Top banner — mobile 320x50, desktop 468x60
-    if(isMobile){
-      injectBanner('ad-banner-top','45257f29a19a6920059854a3a1fb5749',320,50);
-      injectBanner('ad-result-top','45257f29a19a6920059854a3a1fb5749',320,50);
-      injectBanner('ad-mobile-sticky','45257f29a19a6920059854a3a1fb5749',320,50);
-    } else {
-      injectBanner('ad-banner-top','3489ac5bf8b770aa4c7b77f866cb4af1',468,60);
-      injectBanner('ad-result-top','3489ac5bf8b770aa4c7b77f866cb4af1',468,60);
-      injectBanner('ad-sidebar','9c9a56502ebfc9f9e62440259457b405',160,300);
-    }
-
-    // 300x250 placements
-    injectBanner('ad-result-footer','5480ecd74cbb498452aec2224198c3e4',300,250);
-    injectBanner('ad-tools-top','3489ac5bf8b770aa4c7b77f866cb4af1',468,60);
-    injectBanner('ad-tools-footer','5480ecd74cbb498452aec2224198c3e4',300,250);
-    injectBanner('ad-comm-top','3489ac5bf8b770aa4c7b77f866cb4af1',468,60);
-    injectBanner('ad-comm-mid','5480ecd74cbb498452aec2224198c3e4',300,250);
-    injectBanner('ad-seo-top','3489ac5bf8b770aa4c7b77f866cb4af1',468,60);
-  }
-
-  return{init:initAll};
-})();
-
-// ============================================================
 // ANALYTICS HOOKS (IDs injected externally)
 // ============================================================
 window.Analytics={
@@ -1912,14 +1819,13 @@ window.addEventListener('DOMContentLoaded',()=>{
   initChat();
   renderGoals();
   renderSeoPage();
-  AdManager.init();
   // Close modal on backdrop click
   document.getElementById('seoModal').addEventListener('click',function(e){
     if(e.target===this)closeSeoModal();
   });
 });
 </script>
-  
+
 <script>
   window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
 </script>
@@ -1927,3 +1833,5 @@ window.addEventListener('DOMContentLoaded',()=>{
 
 </body>
 </html>
+
+
